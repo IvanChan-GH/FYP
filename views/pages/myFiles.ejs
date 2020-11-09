@@ -1,0 +1,53 @@
+<form
+  action="/upload"
+  method="POST"
+  enctype="multipart/form-data"
+  onsubmit="submitForm(this);return false"
+  style="text-align: left"
+>
+  <label><u>Upload a ppt file: </u></label>
+  <input type="file" name="ppt" accept=".pptx,.ppt" id="upload" />
+  <button type="submit">Submit</button>
+</form>
+
+<ul class="list-group">
+  <% users.forEach( function(user) { %>
+  <li
+    class="list-group-item list-group-item-success d-flex justify-content-between align-items-center"
+  >
+    <%= user.fileName %>
+    <button type="button" class="btn btn-danger">Delete</button>
+  </li>
+  <% }); %>
+</ul>
+
+<script>
+  async function submitForm(oFormElement) {
+    var file = document.getElementById("upload").files[0].name;
+    // alert(file);
+    
+    var formData = new FormData(oFormElement);
+    formData.append("filename", file);
+  
+    // for (var pair of formData.entries()) {
+    //     alert(pair[0] + ", " + pair[1]);
+    //   }
+
+    var response = await fetch(oFormElement.action, {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+      alert(data.message);
+      location.reload(true);
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  }
+</script>
