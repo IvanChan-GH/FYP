@@ -8,6 +8,8 @@
  * https://sailsjs.com/anatomy/config/routes-js
  */
 
+const { deleteFolder } = require("../api/controllers/FileController");
+
 module.exports.routes = {
   'GET /auth/google': {controller: 'PassportController', action: 'googleAuth'},
   'GET /logout': {controller: 'PassportController', action: 'logout'},
@@ -20,7 +22,17 @@ module.exports.routes = {
   '/': {view: 'pages/home'},
   // 'GET /myfiles': {view: 'pages/myFiles'},
   'GET /myfiles': {controller: 'FileController', action: 'listfiles'},
+  //go to ppt detail page
+  'GET /pptDetail/:foldername': {controller: 'FileController', action: 'viewPPTdetail'},
+  //upload and delete ppt files
   'POST /upload': {controller: 'FileController', action: 'upload'},
+  'POST /deletefolder/:foldername':{controller: 'FileController', action:'deleteFolder'},
+
+  // Multiple choice form interface
+  'GET /:foldername/MCform': {controller: 'MCController', action: 'addMCform'},
+  // submit mc form
+  'POST /:foldername/submitMCform': {controller: 'MCController', action: 'submitMCform'},
+
   
 
   /***************************************************************************

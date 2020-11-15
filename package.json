@@ -11,6 +11,7 @@
     "grunt": "1.0.4",
     "passport": "^0.4.1",
     "passport-google-oauth2": "^0.2.0",
+    "ppt-png": "^0.7.1",
     "sails": "^1.2.3",
     "sails-hook-grunt": "^4.0.0",
     "sails-hook-orm": "^2.1.1",

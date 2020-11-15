@@ -21,12 +21,19 @@ module.exports = {
   // upload ppt file
   upload: function (req, res) {
     const email = req.session.email;
-    
-    console.log('body:'+req.body);
 
+    const folder = new Date().getTime();
     const options = {
-      dirname: "../../assets/files/" + req.session.email + "/tmp",
+      dirname:
+        sails.config.appPath +
+        "/assets/files/" +
+        req.session.email +
+        "/" +
+        folder,
     };
+
+    var Converter = require("ppt-png");
+    var glob = require("glob");
 
     req.file("ppt").upload(options, async function (err, uploadedFiles) {
       if (err) {
@@ -37,33 +44,107 @@ module.exports = {
       // console.log(uploadedFiles);
       var word = uploadedFiles[0].filename.split(".");
       var filename = word[0];
-      console.log("file name:" + filename);
-      console.log(uploadedFiles);
+      // console.log("file name:" + filename);
+      // console.log(uploadedFiles);
 
-      await User.create({
+      const user = await User.create({
         name: req.session.name,
         email: req.session.email,
-        fd: uploadedFiles[0].fd,
-        fileName: filename,
+        fileName: uploadedFiles[0].filename,
+        fileNameWithoutFormat: filename,
+        folder: folder,
+        folderFullPath: '/files/' +req.session.email +'/' +folder,
       });
 
-      // const fs = require("fs");
-      // // directory paths
-      // const oldDirName = "../../assets/files/" + req.session.email + "/tmp";
-      // const newDirName = "../../assets/files/" + req.session.email + "/"+ filename;
+      console.log(uploadedFiles[0].fd);
 
-      // // rename the directory
-      // try {
-      //   fs.renameSync(oldDirName, newDirName);
-      //   console.log("Directory renamed successfully.");
-      // } catch (err) {
-      //   console.log(err);
-      // }
+      glob(uploadedFiles[0].fd, {}, function (error, files) {
+        console.log("files: ", files);
+        if (files) {
+          const fs = require("fs");
 
-      return res.json({
-        message: "File " + uploadedFiles[0].filename + " load successfully",
+          new Converter({
+            files: files,
+            output: options.dirname + "/",
+            invert: true,
+            deletePdfFile: true,
+            outputType: "png",
+            logLevel: 2,
+          })
+            .wait()
+            .then(async function (data) {
+              console.log(data.failed, data.success, data.files, data.time);
+              for (let i = 0; i < data.success.length; i++) {
+                const element = data.success[i];
+                for (let j = 0; j < element.length; j++) {
+                  const result = element[j];
+                  const extension = result.name.split(".").pop();
+                  const newPath =
+                    options.dirname + "/" + result.page + "." + extension;
+                  fs.rename(result.path, newPath, () => {});
+                }
+                console.log(element.length);
+                console.log(folder);
+                await User.updateOne({ folder: folder }).set({
+                  slideNum: element.length
+                });
+              }
+              return res.json({
+                message: "File " + uploadedFiles[0].filename + " load successfully",
+              });
+            });
+          
+        }else{
+          return res.json({
+            message: "File " + uploadedFiles[0].filename + " upload failed, try to upload again.",
+          });
+        }
       });
 
+      
+    });
+  },
+
+  // delete uploaded ppt and folder
+  deleteFolder: async function (req, res) {
+    console.log(req.params.foldername);
+    const fs = require("fs");
+
+    // path of your file
+    let path =
+      "/Users/mong/Desktop/Event Interaction System/assets/files/kamong@gmail.com/" +
+      req.params.foldername;
+    // fs.access will check if file is available or not
+    fs.access(path, fs.F_OK, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      //file exists, Go for delete operation
+      var options = { recursive: true };
+      fs.rmdir(path, options, function (err) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(" File has been Deleted");
+      });
+    });
+
+    await User.destroy({
+      email: req.session.email,
+      folder: req.params.foldername,
+    });
+    return res.json({
+      message: "File deleted!",
+    });
+  },
+
+  viewPPTdetail: async function (req, res) {
+    var model = await User.findOne({ folder: req.params.foldername });
+    // console.log(model);
+    return res.view("pages/pptDetail", {
+      user: model,
     });
   },
 };

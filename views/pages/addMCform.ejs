@@ -1,0 +1,186 @@
+<form method="post" style="float: left; text-align: left" class="col-12" onsubmit="submitForm(this);return false">
+  <div id="MC-container">
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" style="font-weight: bold; font-size: 20px;">Question 1:</label>
+      <div class="col-sm-9">
+        <textarea
+          class="form-control-plaintext"
+          name="question"
+          placeholder="Enter the question here..."
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+          required
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-1 col-form-label">A:</label>
+      <div class="col-sm-5">
+        <input
+          class="form-control-plaintext"
+          name="MC[1][answserA]"
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+          required
+        />
+      </div>
+      <label class="col-sm-1 col-form-label">B:</label>
+      <div class="col-sm-5">
+        <input
+          class="form-control-plaintext"
+          name="MC[1][answserB]"
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-1 col-form-label">C:</label>
+      <div class="col-sm-5">
+        <input
+          class="form-control-plaintext"
+          name="MC[1][answserC]"
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+          required
+        />
+      </div>
+      <label class="col-sm-1 col-form-label">D:</label>
+      <div class="col-sm-5">
+        <input
+          class="form-control-plaintext"
+          name="MC[1][answserD]"
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01"
+          >Correct answer</label
+        >
+      </div>
+      <select
+        class="custom-select"
+        id="inputGroupSelect01"
+        name="MC[1][trueAnswer]"
+        required
+      >
+        <option selected disabled>Choose...</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+      </select>
+    </div>
+  </div>
+
+  <a class="btn btn-primary" href="javascript:;" id="add-new-question">+ Add new question</a>
+  <br><br>
+  <p style="float: right;">
+    <input class="btn btn-info"type="submit" />
+  </p>
+</form>
+
+<script>
+  let i = 2;
+  document.getElementById("add-new-question").onclick = function () {
+    let template = `
+    <br>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label" style="font-weight: bold; font-size: 20px;">Question ${i}:</label>
+      <div class="col-sm-9">
+        <textarea
+          class="form-control-plaintext"
+          name="question"
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-1 col-form-label">A:</label>
+      <div class="col-sm-5">
+        <input
+          class="form-control-plaintext"
+          name="MC[${i}][answserA]"
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+        />
+      </div>
+      <label class="col-sm-1 col-form-label">B:</label>
+      <div class="col-sm-5">
+        <input
+          class="form-control-plaintext"
+          name="MC[${i}][answserB]"
+          style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+        />
+      </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-1 col-form-label">C:</label>
+        <div class="col-sm-5">
+          <input
+            class="form-control-plaintext"
+            name="MC[${i}][answserC]"
+            style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+          />
+        </div>
+        <label class="col-sm-1 col-form-label">D:</label>
+        <div class="col-sm-5">
+          <input
+            class="form-control-plaintext"
+            name="MC[${i}][answserD]"
+            style="background-color: whitesmoke; border: 1px solid cornflowerblue"
+          />
+        </div>
+      </div>
+
+    <div class="input-group mb-3 ">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01"
+          >True answer</label
+        >
+      </div>
+      <select
+        class="custom-select"
+        id="inputGroupSelect01"
+        name="MC[${i}][trueAnswer]"
+      >
+        <option selected>Choose...</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+      </select>
+    </div>
+    `;
+
+    let container = document.getElementById("MC-container");
+    let div = document.createElement("div");
+    div.innerHTML = template;
+    container.appendChild(div);
+
+    i++;
+  };
+
+  async function submitForm(oFormElement) {
+    var response = await fetch('/<%=user.folder%>/submitMCform', {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: new FormData(oFormElement),
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+      alert(data.message);
+      location.reload(true);
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  }
+</script>

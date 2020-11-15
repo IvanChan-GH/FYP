@@ -18,12 +18,21 @@ module.exports = {
       type: 'string',
     },
 
-    fd: {
+    folder: {
       type: 'string',
     },
     fileName: {
       type: 'string',
     },
+    fileNameWithoutFormat: {
+      type: 'string',
+    },
+    folderFullPath: {
+      type: 'string',
+    },
+    slideNum:{
+      type: 'number',
+    }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
