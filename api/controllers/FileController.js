@@ -53,7 +53,7 @@ module.exports = {
         fileName: uploadedFiles[0].filename,
         fileNameWithoutFormat: filename,
         folder: folder,
-        folderFullPath: '/files/' +req.session.email +'/' +folder,
+        folderPath: '/files/' +req.session.email +'/' +folder,
       });
 
       console.log(uploadedFiles[0].fd);
@@ -74,21 +74,39 @@ module.exports = {
             .wait()
             .then(async function (data) {
               console.log(data.failed, data.success, data.files, data.time);
-              for (let i = 0; i < data.success.length; i++) {
-                const element = data.success[i];
-                for (let j = 0; j < element.length; j++) {
-                  const result = element[j];
-                  const extension = result.name.split(".").pop();
-                  const newPath =
-                    options.dirname + "/" + result.page + "." + extension;
-                  fs.rename(result.path, newPath, () => {});
-                }
-                console.log(element.length);
-                console.log(folder);
-                await User.updateOne({ folder: folder }).set({
-                  slideNum: element.length
-                });
-              }
+              // for (let i = 0; i < data.success.length; i++) {
+              //   const element = data.success[i];
+
+              //   for (let j = 0; j < element.length; j++) {
+              //     const result = element[j];
+              //     const extension = result.name.split(".").pop();
+              //     const newPath =
+              //       options.dirname + "/" + result.page + "." + extension;
+
+              //     fs.rename(result.path, newPath, () => {});
+               
+              //   }
+              //   console.log(element);
+                
+              //   await User.updateOne({ folder: folder }).set({
+              //     slideNum: element.length
+              //   });
+              // }
+              const ppt=data.success[0]; // refer to one ppt
+                
+              const element = data.success[0][0];    //refer to one png
+              var words=element.name.split('.');
+              var path=words[0];
+          
+              path= path.substring(0, path.length - 1);
+
+
+              await User.updateOne({ folder: folder }).set({
+                    slideNum: ppt.length,
+                    pngNameNoNum: path
+              });
+
+
               return res.json({
                 message: "File " + uploadedFiles[0].filename + " load successfully",
               });
@@ -112,7 +130,7 @@ module.exports = {
 
     // path of your file
     let path =
-      "/Users/mong/Desktop/Event Interaction System/assets/files/kamong@gmail.com/" +
+    sails.config.appPath + "/assets/files/kamong@gmail.com/" +
       req.params.foldername;
     // fs.access will check if file is available or not
     fs.access(path, fs.F_OK, (err) => {
@@ -141,10 +159,14 @@ module.exports = {
   },
 
   viewPPTdetail: async function (req, res) {
-    var model = await User.findOne({ folder: req.params.foldername });
+    var user = await User.findOne({ folder: req.params.foldername });
     // console.log(model);
+    var event =await Event.find({
+      folder: req.params.foldername 
+    }).sort('insertBefore ASC');;
     return res.view("pages/pptDetail", {
-      user: model,
+      user: user,
+      event: event,
     });
   },
 };
