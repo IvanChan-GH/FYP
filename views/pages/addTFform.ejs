@@ -5,7 +5,7 @@
       <div id="<%= questionID %>">
         <div class=" form-group row">
           <span class="col-sm-3 col-form-label">
-            <button type="button" class="close" style="float: left;background-color: thistle;color:red; border-color:transparent;"
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
               id="" onclick="delque('<%= questionID%>')">
               <span>&times;</spa>
             </button>
@@ -64,7 +64,7 @@
       <div id="${index}">
         <div class=" form-group row">
           <span class="col-sm-3 col-form-label">
-            <button type="button" class="close" style="float:left;background-color: thistle;color:red; border-color:transparent;"
+            <button type="button" class="close" style="width: 30px;height: 40;float:left;background-color: thistle;color:red; border-color:transparent;"
               id="" onclick="delque(${index})">
               <span>&times;</spa>
             </button>
@@ -120,8 +120,8 @@
 
     if (response.ok) {
       var data = await response.json(); // for res.ok() or res.json()
-      // alert(data.message);
-      // window.close();
+      alert(data.message);
+      window.close();
     } else if (response.status == 401) {
       var data = await response.text(); // for res.send()
       alert(data.message);

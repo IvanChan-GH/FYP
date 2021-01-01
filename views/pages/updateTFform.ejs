@@ -1,0 +1,154 @@
+<form method="post" style="float: left; text-align: left" class="col-12"
+  onsubmit="submitForm(this,'<%= user[0].folder%>','<%= user[0].slideNum%>');return false">
+  <div id="TF-container">
+    <% var index=1%>
+    <!-- <%= TF[0].insertBefore %> -->
+    <% TF.forEach(function(t){ %>
+      <div id="<%= index %>">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque('<%= index%>')">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" 
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required><%=t.question%></textarea>
+          </div>
+        </div>
+        <label>Answer:</label>
+        <div class="row " style="padding-top: 5px; padding-left: 12px;">
+            <div class="form-check">
+              <% if(t.trueAnswer=="True") { %>
+                <input class="form-check-input" type="radio" name="selection<%=index%>" checked="checked" value="True">  
+                <label class="form-check-label" >True</label>
+            </div>      
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="selection<%=index%>" value="False">
+                <label class="form-check-label" >False</label>
+              <% } else { %>
+                <input class="form-check-input" type="radio" name="selection<%=index%>"  value="True">  
+                <label class="form-check-label" >True</label>
+            </div>      
+            
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="selection<%=index%>" checked="checked" value="False">
+                <label class="form-check-label" >False</label>
+              <% } %>
+            </div>
+        </div>
+      </div>
+      <br>
+      <% index++%>
+      <% }); %>
+  </div>
+
+    <div>
+      <a class="btn btn-primary" href="javascript:;" id="add-new-question">+ Add new question</a>
+    </div>
+    <br><br>
+
+    <row style="float: right;">
+      <input class="btn btn-info" type="submit" />
+    </row>
+
+</form>
+
+<script>
+  let numOfque = parseInt("<%= TF.length%>");
+  let index=numOfque+1;  //question index
+  let aryQueID=[];  //mark submitted question index
+  for(var i=0;i<numOfque;i++){
+    aryQueID.push((i+1).toString());
+  }
+
+  document.getElementById("add-new-question").onclick = function () {
+    // alert('Q'+index);
+    let template = `
+    <br>
+      <div id="${index}">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float:left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque(${index})">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" placeholder="Enter the question here..."
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required></textarea>
+          </div>
+        </div>
+        <label>Answer:</label>
+        <div class="row " style="padding-top: 5px; padding-left: 12px;">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="selection${index}" id="inlineRadio1" value="True">
+                <label class="form-check-label" >True</label>
+            </div>      
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="selection${index}"  value="False">
+                <label class="form-check-label" ">False</label>
+            </div>
+        </div>
+      </div>
+    `;
+    let str='';
+    str=index.toString();
+    aryQueID.push(str);
+    // alert(aryQueID);
+    index++;
+    let container = document.getElementById("TF-container");
+    let div = document.createElement("div");
+    div.innerHTML = template;
+    container.appendChild(div);
+    numOfque++;
+  
+  };
+
+  async function submitForm(oFormElement, folder, slideNum,) {
+    console.log(aryQueID);
+
+    var formData = new FormData(oFormElement);
+    formData.append('numOfque', numOfque);
+    formData.append('folder', folder)
+    formData.append('slideNum', slideNum)
+    formData.append('insertBefore', '<%=TF[0].insertBefore%>');
+    for(var b=0;b<aryQueID.length;b++){
+        formData.append('aryQueID', aryQueID[b])
+    }
+
+    var response = await fetch('/<%=user[0].folder%>/updateTFform/<%=TF[0].insertBefore%>', {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+      alert(data.message);
+      window.close();
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  };
+
+  async function delque(questionid) {
+    // alert(id)
+    var element = document.getElementById(questionid);
+    element.parentNode.removeChild(element);
+    numOfque--;
+    for(i=0;i<aryQueID.length;i++){
+        if(aryQueID[i]==questionid){
+            aryQueID.splice(i, 1);
+        }
+    }
+
+  }
+</script>

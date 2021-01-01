@@ -1,0 +1,161 @@
+<main role="main">
+    <article id="webslides" class="horizontal">
+    <% for (let page = 1; page <= slides.length+1; page++) {  %>         
+        <%  var Event = Events.filter(e => e.insertBefore  == page) %>
+            <% Event.forEach(function(event) {  %>
+                   <%   if(event.type=="True or False"){  %>            
+                            <% var tf = TFs.filter(e => e.insertBefore  == page) %>
+                            <% tf.forEach(function(t) { %>
+                            <section class="aligncenter question">
+                                <div><%= t.question %></div>
+                                <br><br>
+                                <form>
+                                <div style=" top: 50%;  left: 40%; position: fixed;">
+                                        <input type="radio" name="r1"> Yes
+                                        <input type="radio" name="r1"> No
+                                        <button type="button" class="btn btn-primary" tfid="<%= t.id %>">submit</button>
+                                </div>
+                                </form>
+                            </section>
+                            <% }) %>
+                    <% } else if (event.type=="Multiple Choice"){  %> 
+                            <% var mc = MCs.filter(e => e.insertBefore  == page) %>
+                            <% mc.forEach(function(mc) { %>
+                            <section class="aligncenter question">
+                                <div><%= mc.question %></div>
+                                <br><br>
+                                <form>
+                                <div style=" top: 50%;  left: 40%; position: fixed;">
+                                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                                        <label class="btn btn-outline-primary" for="btnradio1"><%= mc.answerA%></label>
+                                    
+                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                                        <label class="btn btn-outline-primary" for="btnradio2"><%= mc.answerB%></label>
+                                    
+                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                                        <label class="btn btn-outline-primary" for="btnradio3"><%= mc.answerC%></label>
+
+                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
+                                        <label class="btn btn-outline-primary" for="btnradio4"><%= mc.answerD%></label>
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary" tfid="">submit</button>
+                                </div>
+                                </form>
+                            </section>
+                            <% }) %>
+                    <% } %>    
+            <% }) %>
+            <!--  ppt slides -->
+            <section class="aligncenter">
+                <span class="background" style="background-image:url('<%= slides[page-1] %>'); background-size: contain;"></span>
+            </section>
+            
+    <% } %>
+    </article>
+
+    <div class="control-bar col-12">
+        <button id="btn-previous" type="button" class="btn btn-lg btn-info col-1"><<</button>
+        <button id="btn-next" type="button" class="btn btn-lg btn-info col-1">>></button>
+        <button id="btn-grid" type="button" class="btn btn-lg btn-info col-2">Slides</button>
+        <button id="room-id" type="button" class="btn btn-lg  btn-warning col-2" disabled>Room: <%=req.session.roomId%></button>
+        <button id="btn-grid" type="button" class="btn btn-lg btn-info col-2">Result</button>
+        <!-- <button id="btn-grid" type="button" class="btn btn-lg btn-info col-2">Lock</button> -->
+        <button id="btn-leave" type="button" class="btn btn-lg btn-danger col-2">Leave</button>
+    </div>
+</main>
+
+
+ 
+
+<script src="/js/webslides.min.js"></script>
+<script>
+    const slide = new WebSlides();
+    $('#btn-previous').click(function() {
+        console.log('previous');
+        slide.goPrev();
+        io.socket.post('/present/previous', {}, function(data, response) {
+            console.log(data);
+            console.log(response);
+        })
+    });
+    $('#btn-next').click(function() {
+        slide.goNext();
+        io.socket.post('/present/next', {}, function(data, response) {
+            console.log(data);
+            console.log(response);
+        })
+    });
+    $('#btn-leave').click(function() {
+        bootbox.confirm("Are you sure to leave?", function(result){
+              if(result){
+                io.socket.post('/present/leave', {}, function(data, response) {
+                     console.log(data);
+                     console.log(response);  
+                     window.location.href = '/myfiles';       
+                })
+              }
+        });
+       
+    });
+    // window.onload = function() {
+    //     var anchors = document.getElementsByClassName('zoom-layer');
+    //     for(var i = 0; i < anchors.length; i++) {
+    //         var anchor = anchors[i];
+    //         anchor.onclick = function() {
+    //             var slide = anchor.closest('.text-slide-number').innerHTML;
+    //             alert(anchor);
+    //             console.log('123');
+    //         }
+    //     }
+    // }
+
+    $('#btn-grid').click(function() {
+      
+        document.getElementById('viewslides').click();
+
+    });
+
+    $('btn-tf').click(function() {
+        const tfid = $(this).attr('tfid');
+        const form = $(this).closest('form');
+        const formData = new FormData(form[0]);
+        console.log(tfid);
+        console.log(form);
+    });
+   
+</script>
+
+<style>
+    .control-bar {
+        width: 100vw;
+        height: 50px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        opacity: 1;
+        background-color: rgb(243, 243, 243);
+        /* font-weight: bold; */
+    }
+    .control-bar:hover{
+        opacity:1;
+    }
+    .question{
+        font-size: 26px;
+    }
+    #room-id{
+        background-color: #ffc107;
+        color: rgba(36, 35, 35, 0.767);
+    }
+    .bootbox-body{
+        font-size: 20px;
+    }
+    .question{
+        background-image:url('/images/wall.jpeg');
+    }
+    .btn-outline-primary{
+        margin-right:20px;
+        font-size: 20px;
+    }
+</style>

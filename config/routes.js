@@ -11,20 +11,21 @@
 const { deleteFolder } = require("../api/controllers/FileController");
 
 module.exports.routes = {
-  "GET /auth/google": {
-    controller: "PassportController",
-    action: "googleAuth",
-  },
+  "GET /auth/google": {controller: "PassportController",action: "googleAuth",},
   "GET /logout": { controller: "PassportController", action: "logout" },
-  "GET /auth/google/callback": {
-    controller: "PassportController",
-    action: "googleCallback",
+  "GET /auth/google/callback": {controller: "PassportController",action: "googleCallback",
   },
 
-  "/": { view: "pages/home" },
+  // home page
+  "/": { 
+    view: "pages/home" ,
+    locals: {
+      layout: 'layouts/home'
+    }
+  },
   // 'GET /myfiles': {view: 'pages/myFiles'},
   "GET /myfiles": { controller: "FileController", action: "listfiles" },
-  //go to ppt detail page
+  //redirect to ppt detail page
   "GET /pptDetail/:foldername": {
     controller: "FileController",
     action: "viewPPTdetail",
@@ -34,41 +35,66 @@ module.exports.routes = {
   },
   //upload and delete ppt files
   "POST /upload": { controller: "FileController", action: "upload" },
-  "POST /deletefolder/:foldername": {
-    controller: "FileController",
-    action: "deleteFolder",
-  },
+  "POST /deletefolder/:foldername": {controller: "FileController",action: "deleteFolder",},
 
-  // Multiple choice form interface
-  "GET /:foldername/MCform": {
-    controller: "MCController",
-    action: "addMCform",
-  },
+  // redirect to multiple choice form interface
+  "GET /:foldername/MCform": {controller: "MCController",action: "addMCform",},
   // Submit Multiple choice form
-  "POST /:foldername/submitMCform": {
-    controller: "MCController",
-    action: "submitMCform",
-  },
+  "POST /:foldername/submitMCform": {controller: "MCController",action: "submitMCform",},
 
   // True/False form interface
-  "GET /:foldername/TFform": {
-    controller: "TFController",
-    action: "addTF",
-  },
-  // submit  True/False  form
-  "POST /:foldername/submitTFform": {
-    controller: "TFController",
-    action: "submitTFform",
+  "GET /:foldername/TFform": {controller: "TFController",action: "addTF",},
+  // Submit  True/False  form
+  "POST /:foldername/submitTFform": {controller: "TFController",action: "submitTFform",},
+
+  //redirect to multiple choice update form interface
+  "GET /:foldername/getMCform/:insertBefore": {controller: "MCController",action: "getMCform",},
+  //Update Mutiple Choice form data
+  "POST /:foldername/updateMCform/:insertBefore": {controller: "MCController",action: "updateMCform",},
+
+  //redirect to True/False update form interface
+  "GET /:foldername/getTFform/:insertBefore": {controller: "TFController",action: "getTFform",},
+  //Update True/False form data
+  "POST /:foldername/updateTFform/:insertBefore": {controller: "TFController",action: "updateTFform",},
+
+  // Remove event in panel
+  "POST /:foldername/removeEvent": {controller: "EventController",action: "deleteEvent",},
+
+  //start ppt presentation
+  "GET /:foldername/presenting": {
+    controller: "PresentController",
+    action: "startpresent",
+    locals: {
+      layout: 'layouts/pptLayout'
+    }
   },
 
-  // remove event in panel
-  "POST /:foldername/removeEvent": {
-    controller: "EventController",
-    action: "deleteEvent",
+  //audience to join a presentation
+  'GET /room/:roomId': {
+    controller: 'RoomController',
+    action: 'enterRoom',
+    locals: {
+      layout: 'layouts/pptLayout'
+    }
   },
 
-  
+  //switch slide to previous page
+  'POST /present/previous': {
+    controller: 'PresentController',
+    action: 'previous',
+  },
 
+  //switch slide to next page
+  'POST /present/next': {
+    controller: 'PresentController',
+    action: 'next',
+  },
+
+  //end the presentation
+  'POST /present/leave': {
+    controller: 'PresentController',
+    action: 'leave',
+  }
   /***************************************************************************
    *                                                                          *
    * More custom routes here...                                               *

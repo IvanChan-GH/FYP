@@ -24,6 +24,7 @@ module.exports = {
 
     const folder = new Date().getTime();
     const options = {
+      maxBytes: 30000000,
       dirname:
         sails.config.appPath +
         "/assets/files/" +
@@ -66,7 +67,7 @@ module.exports = {
           new Converter({
             files: files,
             output: options.dirname + "/",
-            invert: true,
+            invert: false,
             deletePdfFile: true,
             outputType: "png",
             logLevel: 2,

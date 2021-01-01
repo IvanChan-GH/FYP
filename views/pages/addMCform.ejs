@@ -5,7 +5,7 @@
       <div id="<%= questionID %>">
         <div class=" form-group row">
           <span class="col-sm-3 col-form-label">
-            <button type="button" class="close" style="float: left;background-color: thistle;color:red; border-color:transparent;"
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
               id="" onclick="delque('<%= questionID%>')">
               <span>&times;</spa>
             </button>
@@ -84,14 +84,15 @@
 <script>
 
   let numOfque = 1;
+  let qindex=numOfque+1;
   document.getElementById("add-new-question").onclick = function () {
     let template = `
   
-    <div id="<%= questionID %>">
+    <div id="${qindex}">
         <div class=" form-group row">
           <span class="col-sm-3 col-form-label">
-            <button type="button" class="close" style="float: left;background-color: thistle;color:red; border-color:transparent;"
-              id="" onclick="delque('<%= questionID%>')">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque(${qindex})">
               <span>&times;</spa>
             </button>
             <label style="font-weight: bold; font-size: 20px;"> Question :</label>
@@ -141,9 +142,8 @@
           </select>
         </div>
       </div>
-    <% questionID++%>
     `;
-
+    qindex++;
     let container = document.getElementById("MC-container");
     let div = document.createElement("div");
     div.innerHTML = template;
@@ -165,8 +165,8 @@
 
     if (response.ok) {
       var data = await response.json(); // for res.ok() or res.json()
-      // alert(data.message);
-      // window.close();
+      alert(data.message);
+      window.close();
     } else if (response.status == 401) {
       var data = await response.text(); // for res.send()
       alert(data.message);

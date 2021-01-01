@@ -1,0 +1,59 @@
+<main role="main">
+    <article id="webslides" class="horizontal">
+        <% for (let i = 0; i < slides.length; i++) { %>
+        <%
+        var tf = TFs.filter(e => e.insertBefore - 1 == i)
+        tf.forEach(function(t) { %>
+            <section class="aligncenter" style="background-image:url('/images/wall.jpeg');">
+                <!-- <div><%= JSON.stringify(t) %></div> -->
+                <div><%= t.question %></div>
+                <form>
+                    <input type="radio" name="r1"> Yes
+                    <input type="radio" name="r1"> No
+                    <button type="button" class="btn-tf" tfid="<%= t.id %>">submit</button>
+                </form>
+            </section>
+        <% })
+        %>
+        
+        <!--  ppt slides -->
+        <section class="aligncenter">
+            <span class="background" style="background-image:url('<%= slides[i] %>'); background-size: contain;"></span>
+        </section>
+        <% } %>
+    </article>
+</main>
+
+<script src="/js/webslides.min.js"></script>
+<script>
+    const slide = new WebSlides();
+    console.log('<%= room.currentPage %>');
+    slide.goToSlide(parseInt('<%= room.currentPage %>') - 1)
+    slide.disable();
+    io.socket.on('connect', function() {
+        console.log('Connected');
+        io.socket.post('/present/connect', {}, function(data, response) {
+            console.log(data);
+            console.log(response);
+        })
+        io.socket.on('previous', function(data) {
+            console.log('previous', data);
+            slide.goPrev();
+        });
+        io.socket.on('next', function(data) {
+            console.log('next', data);
+            slide.goNext();
+        });
+        io.socket.on('leave', function(data) {
+            console.log('leave', data);
+            bootbox.alert({
+                size: "large",
+                message: "Host stopped this meeting!",
+                callback: function(){ 
+                
+                    window.location.href = '/';  
+                }
+            })
+        })
+    });
+</script>

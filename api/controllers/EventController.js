@@ -7,7 +7,6 @@
 
 module.exports = {
   deleteEvent: async function (req, res) {
-
     console.log("delete");
     console.log(req.body.folder);
     console.log(req.body.type);
@@ -17,6 +16,11 @@ module.exports = {
             folder:req.body.folder,
             insertBefore:req.body.insertBefore
         });
+    }else if(req.body.type=="True or False"){
+      await TF.destroy({
+        folder:req.body.folder,
+        insertBefore:req.body.insertBefore
+    });
     }
     await Event.destroy({
         type:req.body.type,

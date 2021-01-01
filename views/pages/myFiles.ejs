@@ -12,7 +12,7 @@
     <input
       type="file"
       name="ppt"
-      accept=".pptx,.ppt,.pdf"
+      accept=".pptx,.ppt"
       id="upload"
       class="form-control"
       aria-describedby="inputGroupFileAddon04"
@@ -48,7 +48,7 @@
   "
 >
   <img
-    src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/35771931234507.564a1d2403b3a.gif"
+    src="/images/loading.gif"
     style="
       position: absolute;
       top: 50%;
@@ -60,20 +60,22 @@
     height="200px"
   />
 </div>
-
+<br>
 <div style="font-size: 24px; text-align: left !important">
   <label><u>My file list</u></label>
 </div>
 
 <div>
-  <ul class="list-group">
+  <ul class="list-group" style="text-align:start;">
     <% var index=1; %> <% users.forEach( function(user) { %>
     <li
-      class="list-group-item list-group-item-success d-flex justify-content-between align-items-center"
+      class="list-group-item list-group-item-success d-flex justify-content-between align-items-start"
     >
       <a href="/pptDetail/<%= user.folder %>">
         <%= index %>. <%= user.fileName %>
       </a>
+      <div class="col-7 col-lg-4">
+      <button type="button" class="btn btn-success"  onclick="startbtn('<%=user.folder %>')">Start</button>
       <button
         type="button"
         class="btn btn-danger"
@@ -82,6 +84,8 @@
       >
         Delete
       </button>
+      </div>
+
       <div
         class="modal fade"
         id="exampleModalCenter"
@@ -168,5 +172,9 @@
         }
       }
     });
+  }
+
+  async function startbtn(foldername){
+    window.location.replace("/"+foldername+"/presenting");
   }
 </script>
