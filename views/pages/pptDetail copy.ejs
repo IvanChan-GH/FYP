@@ -1,0 +1,120 @@
+<!-- <h3 style="text-align: left; text-decoration: underline">
+  <%= user.fileName %>
+</h3> -->
+<nav aria-label="breadcrumb" style="background-color: whitesmoke;font-size: 24px;">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/myfiles">My Files</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+      <%= user.fileName %>
+    </li>
+  </ol>
+</nav>
+<% var totalpage=user.slideNum %>
+<% var line=Math.trunc(totalpage/2) %>
+<% var page=1 %>
+<div class="row" style="text-align: left">
+  <span style="display: inline" class="container2 col-6 col-lg-8">
+    <div class="imgcontainer">
+      <div class="row">
+        <% for (var i = 0; i < line;i++ ) {%>
+          <img class="col-6" src="<%=user.folderPath%>/<%= user.pngNameNoNum%><%=i+i+1%>.png">    
+          <img class="col-6" src="<%=user.folderPath%>/<%= user.pngNameNoNum%><%=i+i+2%>.png">   
+            <span class="col-6">Slide <%= page %></span> 
+            <% page+=1%>
+            <span class="col-6">Slide <%= page %></span> 
+            <% page+=1%>
+        <% }%>
+      </div>
+      <% if (totalpage%2!=0) { %>
+        <div class="row"><img class="col-6" src="<%=user.folderPath%>/<%= user.pngNameNoNum%><%=page%>.png"> </div>
+
+        <span class="col-6">Slide <%= page %></span> 
+      <% }%>
+    </div>
+  </span>
+
+  <ul
+    style=" color: navy; text-align: left"
+    class="list-group col-6 col-lg-4"
+  >
+    <li class="list-group-item" style="background-color: rgb(230, 228, 228)">
+
+      <a style="cursor: pointer;" onclick="refresh()"> <img style="max-width: 30px;max-height: 30px;" src="/images/refresh.png"></a>
+      <label style="font-size: 18px; font-weight: bold; margin-top: 8px; margin-left: 4px;">Event Panel</label>
+      <span class="btn-group" role="group" style="float:right; ">
+        <button
+          id="btnGroupDrop1"
+          type="button"
+          class="btn btn-secondary dropdown-toggle"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Add Event
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+          <a class="dropdown-item" href="/<%= user.folder%>/MCform" target="_blank">Multiple Choice</a>
+          <a class="dropdown-item" href="/<%= user.folder%>/TFform" target="_blank">True/False</a>
+        </div>
+      </span>
+    </li>
+
+    <% var len=event.length %>
+    <% for(var k=0; k<len;k++){%>
+    <li
+      class="list-group-item"
+      style="display: block; background-color: rgb(230, 228, 228)"
+    >
+      <button type="button" class="close" style="background-color: thistle;color:red; border-color:transparent;float: right;" onclick="delEvent('<%=event[k].folder %>','<%=event[k].insertBefore %>', '<%=event[k].type %>')">
+        <span>&times;</spa>
+      </button>
+      <% if(event[k].type=="Multiple Choice") {%>
+        <a href="/<%=event[k].folder%>/getMCform/<%= event[k].insertBefore%>" target="_blank"><u><%= event[k].type%> </u></a>
+      <% } else if(event[k].type=="True or False") {%>
+        <a href="/<%=event[k].folder%>/getTFform/<%= event[k].insertBefore%>" target="_blank"><u><%= event[k].type%> </u></a>
+      <% }%>
+      <% if(event[k].insertBefore<=event[k].slideNum) {%>
+        <label style="float: right;">Before Slide <%= event[k].insertBefore%></label>
+      <% } else if(event[k].insertBefore > event[k].slideNum){ %>
+        <label style="float: right;">After Slide <%= event[k].slideNum %></label>
+      <% } %>
+      
+    </li>
+    <% } %>
+  </ul>
+</div>
+
+<script>
+  async function delEvent(folder,insertBefore,type){
+
+    bootbox.confirm('Are you sure to delete?',async function(result) {
+      if (result) {
+        var formData = new FormData();
+        formData.append('folder', folder);
+        formData.append('insertBefore', insertBefore);
+        formData.append('type', type);
+        var response = await fetch('/'+folder+'/removeEvent', {
+          method: 'POST',
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+          // alert(data.message);
+          location.reload();
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);
+        }
+      }
+    });
+  }
+
+  function refresh(){
+    // alert("refresh");
+    window.location.reload(true);
+  }
+</script>

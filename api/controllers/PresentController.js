@@ -34,8 +34,6 @@ module.exports = {
     // await Room.destroy({
     //     id: { '>': 0 }
     // });
-    
-    
     var sameroomid=[1];
     while(sameroomid.length!=0){
       var roomid = Math.floor(1000 + Math.random() * 9000);
@@ -55,6 +53,7 @@ module.exports = {
       userId: user.id,
     }).fetch();
     req.session.roomId = room.roomId;
+    
     return res.view("pages/presentation", {
       MCs: MCs,
       TFs: TFs,
@@ -90,10 +89,30 @@ module.exports = {
     }
     return res.ok();
   },
+
+  //host's slide move forward
+  hostforward: async function(req,res){
+    var room = await Room.findOne({ roomId: req.session.roomId });
+    if (room) {
+      await Room.update({ roomId: req.session.roomId }).set({
+        currentPage: room.currentPage + 1,
+      });
+    }
+    return res.ok();
+  },
+  
   leave: async function (req, res) {
-
     sails.sockets.broadcast(req.session.roomId, "leave");
+    return res.ok();
+  },
 
+  lock: async function (req, res) {
+    var room = await Room.findOne({ roomId: req.session.roomId });
+    sails.sockets.broadcast(req.session.roomId, "lock", {room:room}) ;
+    return res.ok();
+  },
+  unlock: async function (req, res) {
+    sails.sockets.broadcast(req.session.roomId, "unlock");
     return res.ok();
   },
 };

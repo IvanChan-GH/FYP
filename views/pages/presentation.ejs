@@ -5,65 +5,73 @@
             <% Event.forEach(function(event) {  %>
                    <%   if(event.type=="True or False"){  %>            
                             <% var tf = TFs.filter(e => e.insertBefore  == page) %>
-                            <% tf.forEach(function(t) { %>
-                            <section class="aligncenter question">
+                            <% tf.forEach(function(t,index) { %>
+                            <section class="question">
                                 <div><%= t.question %></div>
                                 <br><br>
-                                <form>
-                                <div style=" top: 50%;  left: 40%; position: fixed;">
-                                        <input type="radio" name="r1"> Yes
-                                        <input type="radio" name="r1"> No
-                                        <button type="button" class="btn btn-primary" tfid="<%= t.id %>">submit</button>
-                                </div>
+                                <form id="tfform<%= index %>">
+                                    <div>
+                                        <input type="radio" name="radio" value="True"> True
+                                        <br>
+                                        <input type="radio" name="radio" value="False"> False   
+                                        <br>
+                                        <button type="button" value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
+                                        <button type="button" class="btn btn-success" onclick="TFresult('<%= t.id %>')">Result</button>
+                                    </div>
                                 </form>
                             </section>
                             <% }) %>
                     <% } else if (event.type=="Multiple Choice"){  %> 
                             <% var mc = MCs.filter(e => e.insertBefore  == page) %>
-                            <% mc.forEach(function(mc) { %>
-                            <section class="aligncenter question">
-                                <div><%= mc.question %></div>
-                                <br><br>
-                                <form>
-                                <div style=" top: 50%;  left: 40%; position: fixed;">
-                                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                                        <label class="btn btn-outline-primary" for="btnradio1"><%= mc.answerA%></label>
-                                    
-                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                                        <label class="btn btn-outline-primary" for="btnradio2"><%= mc.answerB%></label>
-                                    
-                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                                        <label class="btn btn-outline-primary" for="btnradio3"><%= mc.answerC%></label>
-
-                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
-                                        <label class="btn btn-outline-primary" for="btnradio4"><%= mc.answerD%></label>
-                                    </div>
-
-                                    <button type="button" class="btn btn-primary" tfid="">submit</button>
+                            <% mc.forEach(function(mc,index) { %>
+                            <section class=" question">
+                                <div style="text-align: left"><%= mc.question %></div>
+                                <br>
+                                <form id="mcform<%= index %>">
+                                <div style=""  >
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerA%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerA%>    </label>               
+                                     </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerB%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerB%>    </label>               
+                                     </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerC%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerC%>    </label>               
+                                     </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerD%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerD%>    </label>               
+                                     </div>
+                                    <br>
+                                    <button type="button" value="Submit" class="btn btn-primary submit" id="btn-mc" onclick="MCvoting('<%= mc.id %>','<%= user.folder %>', 'mcform<%= index %>')">Submit</button>
+                                    <button type="button" class="btn btn-success" onclick="MCresult('<%= mc.id %>')">Result</button>
                                 </div>
                                 </form>
-                            </section>
+                            </section>                            
                             <% }) %>
                     <% } %>    
             <% }) %>
             <!--  ppt slides -->
-            <section class="aligncenter">
-                <span class="background" style="background-image:url('<%= slides[page-1] %>'); background-size: contain;"></span>
-            </section>
-            
+            <% if(page!=slides.length+1) { %>
+                <section class="aligncenter">
+                    <span class="background" style="background-image:url('<%= slides[page-1] %>'); background-size: contain;"></span>
+                </section> 
+            <% } %>
     <% } %>
     </article>
-
+ 
     <div class="control-bar col-12">
         <button id="btn-previous" type="button" class="btn btn-lg btn-info col-1"><<</button>
         <button id="btn-next" type="button" class="btn btn-lg btn-info col-1">>></button>
-        <button id="btn-grid" type="button" class="btn btn-lg btn-info col-2">Slides</button>
+        <button id="btn-lock" stype="font-size:40px !important" type="button" class="btn btn-lg btn-info col-2">Lock</button>
+        <button id="btn-unlock" type="button" class="btn btn-lg btn-info col-2">Unlock</button>
         <button id="room-id" type="button" class="btn btn-lg  btn-warning col-2" disabled>Room: <%=req.session.roomId%></button>
-        <button id="btn-grid" type="button" class="btn btn-lg btn-info col-2">Result</button>
-        <!-- <button id="btn-grid" type="button" class="btn btn-lg btn-info col-2">Lock</button> -->
-        <button id="btn-leave" type="button" class="btn btn-lg btn-danger col-2">Leave</button>
+        <button id="btn-leave" type="button" class="btn btn-lg btn-danger col-2">Leave</button>            
     </div>
+
 </main>
 
 
@@ -71,20 +79,26 @@
 
 <script src="/js/webslides.min.js"></script>
 <script>
-    const slide = new WebSlides();
+    const slide = new WebSlides({
+        autoslide: false,
+        changeOnClick: false,
+        loop: true,
+        minWheelDelta: 40,
+        navigateOnScroll: false,
+        scrollWait: 450,
+        slideOffset: 50,
+        showIndex: true
+    });
     $('#btn-previous').click(function() {
         console.log('previous');
         slide.goPrev();
         io.socket.post('/present/previous', {}, function(data, response) {
-            console.log(data);
-            console.log(response);
+            
         })
     });
     $('#btn-next').click(function() {
         slide.goNext();
         io.socket.post('/present/next', {}, function(data, response) {
-            console.log(data);
-            console.log(response);
         })
     });
     $('#btn-leave').click(function() {
@@ -99,31 +113,145 @@
         });
        
     });
-    // window.onload = function() {
-    //     var anchors = document.getElementsByClassName('zoom-layer');
-    //     for(var i = 0; i < anchors.length; i++) {
-    //         var anchor = anchors[i];
-    //         anchor.onclick = function() {
-    //             var slide = anchor.closest('.text-slide-number').innerHTML;
-    //             alert(anchor);
-    //             console.log('123');
-    //         }
-    //     }
-    // }
+    $('#btn-lock').click(function() {
+        io.socket.post('/present/lock', {}, function(data, response) {
+        
+        })
+    });
+    $('#btn-unlock').click(function() {
+        io.socket.post('/present/unlock', {}, function(data, response) {
+        
+        })
+    });
 
     $('#btn-grid').click(function() {
-      
         document.getElementById('viewslides').click();
-
     });
+    
+    //vote
+    async function MCvoting(qid,folder,formid){
+        // alert("formid:"+formid);
+        const form = document.getElementById(formid);
+        const formData = new FormData(form);
 
-    $('btn-tf').click(function() {
-        const tfid = $(this).attr('tfid');
-        const form = $(this).closest('form');
-        const formData = new FormData(form[0]);
-        console.log(tfid);
-        console.log(form);
-    });
+        // alert(qid+" ,"+folder);
+        formData.append('qid', qid);
+        formData.append('folder', folder);
+     
+        var response = await fetch('/'+folder+'/MCvoting/'+qid, {
+          method: 'POST',
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+        //   alert(data.message);
+          var response = await fetch('/present/hostforward', {
+                method: 'POST',
+                credentials: "same-origin",
+          });
+          slide.goNext();
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);      
+        }  
+    };
+    async function MCresult(qid){
+        console.log(qid);
+        var response = await fetch('/MC/'+qid+'/getvotingresult', {
+          method: 'GET',
+          credentials: "same-origin",
+        
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+    
+          var result=data.result;
+        //   alert(JSON.stringify(result));
+          console.log(result);
+          bootbox.alert({
+            size: "large",
+            title: result.question,
+            message:"<div class='result'><div>"+result.answerA+": " +result.voteA+ "</div>"+
+                    "<div>"+result.answerB+": " +result.voteB+"</div>"+
+                    "<div>"+result.answerC+": " +result.voteC+"</div>"+
+                    "<div>"+result.answerD+": " +result.voteD+"</div><br>"+
+                    "<div>Correct answer: "+result.trueAnswer+"<div></div>",
+            callback: function(){ /* your callback code */ }
+          })
+          
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);
+        }  
+    };
+    
+    async function TFvoting(qid,folder,formid){
+        const form = document.getElementById(formid);
+        const formData = new FormData(form);
+
+        // alert(qid+" ,"+folder);
+        formData.append('qid', qid);
+        formData.append('folder', folder);
+     
+        var response = await fetch('/'+folder+'/TFvoting/'+qid, {
+          method: 'POST',
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+        //   alert(data.message);
+         var response = await fetch('/present/hostforward', {
+            method: 'POST',
+            credentials: "same-origin",
+         });
+          slide.goNext();
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);      
+        }  
+    };
+    async function TFresult(qid){
+        console.log(qid);
+        var response = await fetch('/TF/'+qid+'/getvotingresult', {
+          method: 'GET',
+          credentials: "same-origin",
+        
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+          var result=data.result;
+        //   alert(JSON.stringify(result));
+        //   console.log(result);
+          bootbox.alert({
+            size: "large",
+            title: result.question,
+            message:
+                    "<div class='result'><div>True: " +result.voteTrue+ "</div>"+
+                    "<div>False: " +result.voteFalse+"</div><br>"+
+                    "<div>Correct answer: "+result.trueAnswer+"<div></div>",
+            callback: function(){ /* your callback code */ }
+          })
+          
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);
+        }  
+    };
+    
    
 </script>
 
@@ -134,28 +262,41 @@
         position: fixed;
         bottom: 0;
         left: 0;
-        opacity: 1;
+        opacity: 0;
         background-color: rgb(243, 243, 243);
-        /* font-weight: bold; */
+    
     }
     .control-bar:hover{
         opacity:1;
     }
-    .question{
-        font-size: 26px;
-    }
     #room-id{
         background-color: #ffc107;
-        color: rgba(36, 35, 35, 0.767);
+        color: black;
     }
     .bootbox-body{
         font-size: 20px;
     }
     .question{
+        font-size: 36px;
         background-image:url('/images/wall.jpeg');
     }
     .btn-outline-primary{
         margin-right:20px;
         font-size: 20px;
     }
+    label {
+        word-break: break-all;
+    }
+    .result {
+        word-break: break-all;
+    }
+    .button{
+        font-size: 60px;
+    }
+    .modal-title{
+        font-size: 20px;
+    }
+   
+
+
 </style>

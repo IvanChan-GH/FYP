@@ -8,7 +8,7 @@
  * https://sailsjs.com/anatomy/config/routes-js
  */
 
-const { deleteFolder } = require("../api/controllers/FileController");
+// const { deleteFolder } = require("../api/controllers/FileController");
 
 module.exports.routes = {
   "GET /auth/google": {controller: "PassportController",action: "googleAuth",},
@@ -51,11 +51,19 @@ module.exports.routes = {
   "GET /:foldername/getMCform/:insertBefore": {controller: "MCController",action: "getMCform",},
   //Update Mutiple Choice form data
   "POST /:foldername/updateMCform/:insertBefore": {controller: "MCController",action: "updateMCform",},
+  //MC voting
+  "POST /:foldername/MCvoting/:qid" : {controller: "MCController",action: "MCvoting",},
+  // get mc voting result
+  "GET /MC/:id/getvotingresult": {controller: "MCController",action: "getvotingresult",},
 
   //redirect to True/False update form interface
   "GET /:foldername/getTFform/:insertBefore": {controller: "TFController",action: "getTFform",},
   //Update True/False form data
   "POST /:foldername/updateTFform/:insertBefore": {controller: "TFController",action: "updateTFform",},
+  //TF voting
+  "POST /:foldername/TFvoting/:qid" : {controller: "TFController",action: "TFvoting",},
+  // get TF voting result
+  "GET /TF/:id/getvotingresult": {controller: "TFController",action: "getvotingresult",},
 
   // Remove event in panel
   "POST /:foldername/removeEvent": {controller: "EventController",action: "deleteEvent",},
@@ -78,23 +86,30 @@ module.exports.routes = {
     }
   },
 
-  //switch slide to previous page
-  'POST /present/previous': {
-    controller: 'PresentController',
-    action: 'previous',
-  },
+  //switch host's and audiences' slide to previous page
+  'POST /present/previous': {controller: 'PresentController',action: 'previous',},
+  
 
-  //switch slide to next page
-  'POST /present/next': {
-    controller: 'PresentController',
-    action: 'next',
-  },
+  //switch host and audiences slide to next page
+  'POST /present/next': {controller: 'PresentController',action: 'next',},
+  //switch host's slide to previous page
+  'POST /present/hostforward': {controller: 'PresentController',action: 'hostforward',},
+
+  //lock audience's screen
+  'POST /present/lock': {controller: 'PresentController',action: 'lock',},
+  //unlock audience's screen
+  'POST /present/unlock': {controller: 'PresentController',action: 'unlock',},
 
   //end the presentation
-  'POST /present/leave': {
-    controller: 'PresentController',
-    action: 'leave',
-  }
+  'POST /present/leave': {controller: 'PresentController',action: 'leave',},
+
+
+
+
+
+
+
+
   /***************************************************************************
    *                                                                          *
    * More custom routes here...                                               *

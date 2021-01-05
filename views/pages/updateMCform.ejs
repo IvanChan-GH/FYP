@@ -176,8 +176,14 @@
 
     if (response.ok) {
       var data = await response.json(); // for res.ok() or res.json()
-      alert(data.message);
-      window.close();
+     
+      bootbox.alert({
+          message: data.message,
+          callback: function () {
+             window.close();  
+          }
+      })
+     
     } else if (response.status == 401) {
       var data = await response.text(); // for res.send()
       alert(data.message);

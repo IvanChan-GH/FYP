@@ -1653,7 +1653,7 @@ a#previous {
   #navigation {
     -webkit-animation: fadeIn 6s;
             animation: fadeIn 6s;
-    background: url("../images/swipe.svg") no-repeat center top;
+    /* background: url("../images/swipe.svg") no-repeat center top; */
     background-size: 4.8rem; }
   #navigation a,
   #counter {

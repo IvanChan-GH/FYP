@@ -8,8 +8,8 @@
 module.exports = {
   //list uploaded ppt files
   listfiles: async function (req, res) {
-    req.session.email = "kamong@gmail.com";
-    req.session.name = "Ivan Chan";
+    // req.session.email = "kamong1996@gmail.com";
+    // req.session.name = "Ivan Chan";
 
     var model = await User.find({ email: req.session.email });
 
@@ -75,24 +75,7 @@ module.exports = {
             .wait()
             .then(async function (data) {
               console.log(data.failed, data.success, data.files, data.time);
-              // for (let i = 0; i < data.success.length; i++) {
-              //   const element = data.success[i];
-
-              //   for (let j = 0; j < element.length; j++) {
-              //     const result = element[j];
-              //     const extension = result.name.split(".").pop();
-              //     const newPath =
-              //       options.dirname + "/" + result.page + "." + extension;
-
-              //     fs.rename(result.path, newPath, () => {});
-               
-              //   }
-              //   console.log(element);
                 
-              //   await User.updateOne({ folder: folder }).set({
-              //     slideNum: element.length
-              //   });
-              // }
               const ppt=data.success[0]; // refer to one ppt
                 
               const element = data.success[0][0];    //refer to one png
@@ -101,15 +84,13 @@ module.exports = {
           
               path= path.substring(0, path.length - 1);
 
-
               await User.updateOne({ folder: folder }).set({
                     slideNum: ppt.length,
                     pngNameNoNum: path
               });
 
-
               return res.json({
-                message: "File " + uploadedFiles[0].filename + " load successfully",
+                message: "File " + uploadedFiles[0].filename + " upload successfully",
               });
             });
           

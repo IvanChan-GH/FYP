@@ -90,7 +90,7 @@ module.exports = {
     });
 
     return res.json({
-        message:"Form submitted!"
+        message:"Submit successfully!"
     })
   },
 
@@ -104,6 +104,7 @@ module.exports = {
       folder: req.params.foldername,
     })
     console.log(model2);
+
     return res.view("pages/updateMCform", {
       MC: model,
       user: model2
@@ -132,7 +133,7 @@ module.exports = {
       }
       await MC.create({
         question: body.question,
-        trueAnswer: body.trueAnswer,
+        trueAnswer: trueAns,
         insertBefore: body.insertBefore,
         folder: body.folder,
         answerA: body.answerA,
@@ -159,7 +160,7 @@ module.exports = {
         }
         await MC.create({
           question: body.question[i],
-          trueAnswer: body.trueAnswer[i],
+          trueAnswer: trueAns,
           insertBefore: body.insertBefore,
           folder: body.folder,
           answerA: body.answerA[i],
@@ -178,5 +179,71 @@ module.exports = {
     return res.json({
       message:"Questions updated!"
     })
-  }
+  },
+
+ // audience vote a mc question
+ MCvoting: async function (req, res) {
+    console.log("req.body:"+JSON.stringify(req.body));
+    const qid=req.params.qid;
+    const folder=req.params.folder;
+    if(req.body.btnradio){
+      var m = await MC.find({
+        id:  qid, 
+        folder: folder
+      });
+      console.log("btnradio:"+req.body.btnradio);
+      var mc=m[0];
+      if(req.body.btnradio==mc.answerA){
+        await MC.update({ 
+          id: qid
+        })
+        .set({
+          voteA: mc.voteA+1,
+          audience: mc.audience+1
+        });
+      }else if(req.body.btnradio==mc.answerB){
+        await MC.update({ 
+          id: qid
+        })
+        .set({
+          voteB: mc.voteB+1,
+          audience: mc.audience+1
+        });
+      }else if(req.body.btnradio==mc.answerC){
+        await MC.update({ 
+          id: qid
+        })
+        .set({
+          voteC: mc.voteC+1,
+          audience: mc.audience+1
+        });
+      }else if(req.body.btnradio==mc.answerD){
+        console.log("d");
+        await MC.update({ 
+          id: qid
+        })
+        .set({
+          voteD: mc.voteD+1,
+          audience: mc.audience+1
+        });
+      }
+    }
+
+    return res.json({
+      message:"vote successfully"
+    })
+  },
+  // host click result button
+ getvotingresult: async function (req, res) {
+  
+    var model = await MC.findOne({ 
+      id: req.params.id
+    });
+    sails.sockets.broadcast(req.session.roomId, "MCvotingresult",{model:model} );
+
+    return res.json({
+      result:model
+    })
+ }
+
 };

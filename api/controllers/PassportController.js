@@ -18,16 +18,19 @@ module.exports = {
       if (err) {
         console.log ('google callback error: ' + err);
       }
-      // console.log ('user:'+ user);
+      console.log ('user:'+ JSON.stringify(user));
+      console.log(user.name);
       req.session.name = user.name;
       req.session.email = user.email;
       res.redirect ('/myfiles');
     }) (req, res, next);
   },
+  
   logout: function(req, res) {
+    console.log("logout");
+    req.session.name = "";
+    req.session.email = "";
     req.logout();
-    // req.session.name = null;
-    // req.session.email = null;
     res.redirect('/');
   }
 };

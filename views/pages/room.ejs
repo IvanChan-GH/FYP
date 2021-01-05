@@ -1,28 +1,67 @@
 <main role="main">
     <article id="webslides" class="horizontal">
-        <% for (let i = 0; i < slides.length; i++) { %>
-        <%
-        var tf = TFs.filter(e => e.insertBefore - 1 == i)
-        tf.forEach(function(t) { %>
-            <section class="aligncenter" style="background-image:url('/images/wall.jpeg');">
-                <!-- <div><%= JSON.stringify(t) %></div> -->
-                <div><%= t.question %></div>
-                <form>
-                    <input type="radio" name="r1"> Yes
-                    <input type="radio" name="r1"> No
-                    <button type="button" class="btn-tf" tfid="<%= t.id %>">submit</button>
-                </form>
-            </section>
-        <% })
-        %>
-        
-        <!--  ppt slides -->
-        <section class="aligncenter">
-            <span class="background" style="background-image:url('<%= slides[i] %>'); background-size: contain;"></span>
-        </section>
-        <% } %>
+    <% for (let page = 1; page <= slides.length+1; page++) {  %>         
+        <%  var Event = Events.filter(e => e.insertBefore  == page) %>
+            <% Event.forEach(function(event) {  %>
+                   <%   if(event.type=="True or False"){  %>            
+                            <% var tf = TFs.filter(e => e.insertBefore  == page) %>
+                            <% tf.forEach(function(t,index) { %>
+                            <section class="question">
+                                <div><%= t.question %></div>
+                                <br><br>
+                                <form id="tfform<%= index %>">
+                                    <div>
+                                        <input type="radio" name="radio" value="True"> True
+                                        <br>
+                                        <input type="radio" name="radio" value="False"> False   
+                                        <br>
+                                        <button type="button" value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
+                                    </div>
+                                </form>
+                            </section>
+                            <% }) %>
+                    <% } else if (event.type=="Multiple Choice"){  %> 
+                            <% var mc = MCs.filter(e => e.insertBefore  == page) %>
+                            <% mc.forEach(function(mc,index) { %>
+                            <section class=" question">
+                                <div style="text-align: left"><%= mc.question %></div>
+                                <br>
+                                <form id="mcform<%= index %>">
+                                <div style=""  >
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerA%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerA%>    </label>               
+                                     </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerB%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerB%>    </label>               
+                                     </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerC%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerC%>    </label>               
+                                     </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerD%>" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="btnradio1"><%= mc.answerD%>    </label>               
+                                     </div>
+                                    <br>
+                                    <button type="button" value="Submit" class="btn btn-primary submit" id="btn-mc" onclick="MCvoting('<%= mc.id %>','<%= user.folder %>', 'mcform<%= index %>')">Submit</button>
+                                </div>
+                                </form>
+                            </section>                            
+                            <% }) %>
+                    <% } %>    
+            <% }) %>
+            <!--  ppt slides -->
+            <% if(page!=slides.length+1) { %>
+                <section class="aligncenter">
+                    <span class="background" style="background-image:url('<%= slides[page-1] %>'); background-size: contain;"></span>
+                </section> 
+            <% } %>
+    <% } %>
     </article>
 </main>
+
 
 <script src="/js/webslides.min.js"></script>
 <script>
@@ -33,15 +72,11 @@
     io.socket.on('connect', function() {
         console.log('Connected');
         io.socket.post('/present/connect', {}, function(data, response) {
-            console.log(data);
-            console.log(response);
-        })
+        });
         io.socket.on('previous', function(data) {
-            console.log('previous', data);
             slide.goPrev();
         });
         io.socket.on('next', function(data) {
-            console.log('next', data);
             slide.goNext();
         });
         io.socket.on('leave', function(data) {
@@ -50,10 +85,134 @@
                 size: "large",
                 message: "Host stopped this meeting!",
                 callback: function(){ 
-                
                     window.location.href = '/';  
                 }
             })
-        })
+        });
+        io.socket.on('MCvotingresult', function(data) {
+            console.log(JSON.stringify(data));
+            var result=data.model;
+            bootbox.alert({
+            size: "large",
+            title: result.question,
+            message:"<div class='result'><div>"+result.answerA+": " +result.voteA+ "</div>"+
+                    "<div>"+result.answerB+": " +result.voteB+"</div>"+
+                    "<div>"+result.answerC+": " +result.voteC+"</div>"+
+                    "<div>"+result.answerD+": " +result.voteD+"</div><br>"+
+                    "<div>Correct answer: "+result.trueAnswer+"<div></div>",
+            callback: function(){ /* your callback code */ }
+          })
+        });
+        io.socket.on('TFvotingresult', function(data) {
+            console.log(JSON.stringify(data));
+            var result=data.model;
+            bootbox.alert({
+            size: "large",
+            title: result.question,
+            message:"<div class='result'><div>True: " +result.voteTrue+ "</div>"+
+                    "<div>False: " +result.voteFalse+"</div><br>"+
+                    "<div>Correct answer: "+result.trueAnswer+"<div></div>",
+            callback: function(){ /* your callback code */ }
+          })
+        });
+        io.socket.on('lock', function(data) {
+            // alert(JSON.stringify(data.room));
+            var data=data.room;
+            var submitbtn=document.getElementsByClassName('submit');
+            for(var i = 0; i < submitbtn.length; i++) {
+                submitbtn[i].disabled=true;
+            }
+            slide.disable();
+            slide.goToSlide(parseInt(data.currentPage) - 1);
+        });
+        io.socket.on('unlock', function(data) {
+            // alert("unlock");
+            var submitbtn=document.getElementsByClassName('submit');
+            for(var i = 0; i < submitbtn.length; i++) {
+                submitbtn[i].disabled=false;
+            }
+            slide.enable();
+        });
     });
+
+    async function MCvoting(qid,folder,formid){
+        // alert("formid:"+formid);
+        const form = document.getElementById(formid);
+        const formData = new FormData(form);
+
+        // alert(qid+" ,"+folder);
+        formData.append('qid', qid);
+        formData.append('folder', folder);
+     
+        var response = await fetch('/'+folder+'/MCvoting/'+qid, {
+          method: 'POST',
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+        //   alert(data.message);
+          slide.goNext();
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);      
+        }  
+    };
+     
+    async function TFvoting(qid,folder,formid){
+        const form = document.getElementById(formid);
+        const formData = new FormData(form);
+
+        // alert(qid+" ,"+folder);
+        formData.append('qid', qid);
+        formData.append('folder', folder);
+     
+        var response = await fetch('/'+folder+'/TFvoting/'+qid, {
+          method: 'POST',
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+        //   alert(data.message);
+          slide.goNext();
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);      
+        }  
+    }
 </script>
+
+<style>
+
+#room-id{
+        background-color: #ffc107;
+        color: black;
+    }
+    .bootbox-body{
+        font-size: 20px;
+    }
+    .question{
+        font-size: 36px;
+        background-image:url('/images/wall.jpeg');
+    }
+    .btn-outline-primary{
+        margin-right:20px;
+        font-size: 20px;
+    }
+    label{
+        word-break: break-all;
+    }
+    .result {
+        word-break: break-all;
+    }
+    .modal-title{
+        font-size: 20px;
+    }
+</style>

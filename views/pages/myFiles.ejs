@@ -65,7 +65,7 @@
   <label><u>My file list</u></label>
 </div>
 
-<div>
+<div  style="min-height: 180px;">
   <ul class="list-group" style="text-align:start;">
     <% var index=1; %> <% users.forEach( function(user) { %>
     <li
@@ -131,6 +131,7 @@
 </div>
 
 <script>
+  //upload ppt
   async function submitForm(oFormElement) {
     document.getElementById("overlay").style.display = "block"; // show loading overlap
     var response = await fetch(oFormElement.action, {
@@ -142,8 +143,16 @@
     if (response.ok) {
       var data = await response.json(); // for res.ok() or res.json()
       document.getElementById("overlay").style.display = "none";;
-      alert(data.message);
-      location.reload(true);
+      // alert(data.message);
+      console.log(data.message);
+      var msg=data.message
+      bootbox.alert({
+          message: data.message,
+          callback: function () {
+            location.reload(true);   
+          }
+      })
+      // location.reload(true);
     } else if (response.status == 401) {
       var data = await response.text(); // for res.send()
       alert(data.message);
