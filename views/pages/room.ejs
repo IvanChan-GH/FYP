@@ -1,13 +1,14 @@
 <main role="main">
     <article id="webslides" class="horizontal">
-    <% for (let page = 1; page <= slides.length+1; page++) {  %>         
+
+        <% for (let page = 1; page <= slides.length+1; page++) {  %>         
         <%  var Event = Events.filter(e => e.insertBefore  == page) %>
             <% Event.forEach(function(event) {  %>
                    <%   if(event.type=="True or False"){  %>            
                             <% var tf = TFs.filter(e => e.insertBefore  == page) %>
                             <% tf.forEach(function(t,index) { %>
                             <section class="question">
-                                <div><%= t.question %></div>
+                                <div><%= t.question %>123</div>
                                 <br><br>
                                 <form id="tfform<%= index %>">
                                     <div>
@@ -15,7 +16,7 @@
                                         <br>
                                         <input type="radio" name="radio" value="False"> False   
                                         <br>
-                                        <button type="button" value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
+                                        <button type="button" disabled value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
                                     </div>
                                 </form>
                             </section>
@@ -45,7 +46,7 @@
                                         <label class="form-check-label" for="btnradio1"><%= mc.answerD%>    </label>               
                                      </div>
                                     <br>
-                                    <button type="button" value="Submit" class="btn btn-primary submit" id="btn-mc" onclick="MCvoting('<%= mc.id %>','<%= user.folder %>', 'mcform<%= index %>')">Submit</button>
+                                    <button type="button" disabled value="Submit" class="btn btn-primary submit" id="btn-mc" onclick="MCvoting('<%= mc.id %>','<%= user.folder %>', 'mcform<%= index %>')">Submit</button>
                                 </div>
                                 </form>
                             </section>                            
@@ -65,12 +66,34 @@
 
 <script src="/js/webslides.min.js"></script>
 <script>
-    const slide = new WebSlides();
-    console.log('<%= room.currentPage %>');
+    // console.log("viewer:"+'<%= req.session.viewer%>')
+    var viewer='<%=req.session.viewer%>';
+
+    console.log("viewer:"+viewer);
+
+    console.log('allowScroll:<%= user.allowScroll %>');
+        console.log('makerecord:<%= user.makerecords %>');
+    if('<%=user.allowScroll%>'=="true"){
+        var allowScroll=true;
+    }else if('<%=user.allowScroll%>'=="false"){
+        var allowScroll=false;
+    }
+    const slide = new WebSlides({
+        autoslide: false,
+        changeOnClick: false,
+        loop: true,
+        minWheelDelta: 40,
+        navigateOnScroll: allowScroll,
+        scrollWait: 450,
+        slideOffset: 50,
+        showIndex: false});
+
+    // console.log('current page:<%= room.currentPage %>');
     slide.goToSlide(parseInt('<%= room.currentPage %>') - 1)
     slide.disable();
+
     io.socket.on('connect', function() {
-        console.log('Connected');
+        // console.log('Connected');
         io.socket.post('/present/connect', {}, function(data, response) {
         });
         io.socket.on('previous', function(data) {
@@ -80,11 +103,13 @@
             slide.goNext();
         });
         io.socket.on('leave', function(data) {
-            console.log('leave', data);
             bootbox.alert({
                 size: "large",
                 message: "Host stopped this meeting!",
-                callback: function(){ 
+                callback: async function(){ 
+                    var res= await fetch('/discardsession/'+viewer,{
+                        method: "POST"
+                    })
                     window.location.href = '/';  
                 }
             })
@@ -143,7 +168,7 @@
         // alert(qid+" ,"+folder);
         formData.append('qid', qid);
         formData.append('folder', folder);
-     
+        formData.append('viewer', viewer);
         var response = await fetch('/'+folder+'/MCvoting/'+qid, {
           method: 'POST',
           credentials: "same-origin",
@@ -169,7 +194,7 @@
         // alert(qid+" ,"+folder);
         formData.append('qid', qid);
         formData.append('folder', folder);
-     
+        formData.append('viewer', viewer);
         var response = await fetch('/'+folder+'/TFvoting/'+qid, {
           method: 'POST',
           credentials: "same-origin",
@@ -187,6 +212,8 @@
           alert(response.statusText);      
         }  
     }
+
+
 </script>
 
 <style>

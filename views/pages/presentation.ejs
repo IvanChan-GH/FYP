@@ -1,5 +1,7 @@
 <main role="main">
     <article id="webslides" class="horizontal">
+    
+
     <% for (let page = 1; page <= slides.length+1; page++) {  %>         
         <%  var Event = Events.filter(e => e.insertBefore  == page) %>
             <% Event.forEach(function(event) {  %>
@@ -11,12 +13,15 @@
                                 <br><br>
                                 <form id="tfform<%= index %>">
                                     <div>
+                                      <div class="form-check">
                                         <input type="radio" name="radio" value="True"> True
-                                        <br>
+                                      </div>
+                                      <div class="form-check">
                                         <input type="radio" name="radio" value="False"> False   
-                                        <br>
+                                      </div>
                                         <button type="button" value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
                                         <button type="button" class="btn btn-success" onclick="TFresult('<%= t.id %>')">Result</button>
+                                      
                                     </div>
                                 </form>
                             </section>
@@ -69,7 +74,7 @@
         <button id="btn-lock" stype="font-size:40px !important" type="button" class="btn btn-lg btn-info col-2">Lock</button>
         <button id="btn-unlock" type="button" class="btn btn-lg btn-info col-2">Unlock</button>
         <button id="room-id" type="button" class="btn btn-lg  btn-warning col-2" disabled>Room: <%=req.session.roomId%></button>
-        <button id="btn-leave" type="button" class="btn btn-lg btn-danger col-2">Leave</button>            
+        <button id="btn-leave" type="button" class="btn btn-lg btn-danger col-2" onclick="leave('<%= user.folder%>')">Leave</button>            
     </div>
 
 </main>
@@ -79,6 +84,7 @@
 
 <script src="/js/webslides.min.js"></script>
 <script>
+
     const slide = new WebSlides({
         autoslide: false,
         changeOnClick: false,
@@ -101,18 +107,17 @@
         io.socket.post('/present/next', {}, function(data, response) {
         })
     });
-    $('#btn-leave').click(function() {
+    async function leave(folder){
         bootbox.confirm("Are you sure to leave?", function(result){
               if(result){
-                io.socket.post('/present/leave', {}, function(data, response) {
+                io.socket.post("/"+folder+'/present/leave', {}, function(data, response) {
                      console.log(data);
-                     console.log(response);  
-                     window.location.href = '/myfiles';       
+                     console.log(response);         
                 })
+                window.location.href = '/myfiles';
               }
         });
-       
-    });
+    };
     $('#btn-lock').click(function() {
         io.socket.post('/present/lock', {}, function(data, response) {
         
@@ -123,7 +128,6 @@
         
         })
     });
-
     $('#btn-grid').click(function() {
         document.getElementById('viewslides').click();
     });
@@ -137,6 +141,7 @@
         // alert(qid+" ,"+folder);
         formData.append('qid', qid);
         formData.append('folder', folder);
+        formData.append('viewer', viewer);
      
         var response = await fetch('/'+folder+'/MCvoting/'+qid, {
           method: 'POST',
@@ -199,7 +204,7 @@
         // alert(qid+" ,"+folder);
         formData.append('qid', qid);
         formData.append('folder', folder);
-     
+        formData.append('viewer', viewer);
         var response = await fetch('/'+folder+'/TFvoting/'+qid, {
           method: 'POST',
           credentials: "same-origin",
@@ -252,6 +257,7 @@
         }  
     };
     
+    
    
 </script>
 
@@ -262,7 +268,7 @@
         position: fixed;
         bottom: 0;
         left: 0;
-        opacity: 0;
+        opacity: 1;
         background-color: rgb(243, 243, 243);
     
     }
@@ -296,7 +302,7 @@
     .modal-title{
         font-size: 20px;
     }
-   
-
-
+    .form-check >label{
+      margin-left: 10px;
+    }
 </style>

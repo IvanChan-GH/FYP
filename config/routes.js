@@ -26,13 +26,12 @@ module.exports.routes = {
   // 'GET /myfiles': {view: 'pages/myFiles'},
   "GET /myfiles": { controller: "FileController", action: "listfiles" },
   //redirect to ppt detail page
-  "GET /pptDetail/:foldername": {
-    controller: "FileController",
-    action: "viewPPTdetail",
-    // locals: {
-    //   layout: false
-    // }
-  },
+  "GET /pptDetail/:foldername": { controller: "FileController", action: "viewPPTdetail",},
+  //redirect to custom setting page
+  "GET /:foldername/setting": { controller: "FileController", action: "Setting",},
+  //redirect to custom setting page
+  "POST /:foldername/setting/update": { controller: "FileController", action: "updateSetting",},
+
   //upload and delete ppt files
   "POST /upload": { controller: "FileController", action: "upload" },
   "POST /deletefolder/:foldername": {controller: "FileController",action: "deleteFolder",},
@@ -68,7 +67,7 @@ module.exports.routes = {
   // Remove event in panel
   "POST /:foldername/removeEvent": {controller: "EventController",action: "deleteEvent",},
 
-  //start ppt presentation
+  //start ppt presentation (host's view)
   "GET /:foldername/presenting": {
     controller: "PresentController",
     action: "startpresent",
@@ -77,7 +76,14 @@ module.exports.routes = {
     }
   },
 
-  //audience to join a presentation
+  //get room setting info
+  'GET /roomsetting/:room': {controller: 'RoomController',action: 'getRoomSetting',},
+  //create viewer session
+  'POST /createsession/:viewer': {controller: 'RoomController',action: 'addViewerSession',},
+  //discard viewer session
+  'POST /discardsession/:viewer': {controller: 'RoomController',action: 'delViewerSession',},
+
+  //audience to join a presentation (audience's view)
   'GET /room/:roomId': {
     controller: 'RoomController',
     action: 'enterRoom',
@@ -85,11 +91,10 @@ module.exports.routes = {
       layout: 'layouts/pptLayout'
     }
   },
+  
 
   //switch host's and audiences' slide to previous page
   'POST /present/previous': {controller: 'PresentController',action: 'previous',},
-  
-
   //switch host and audiences slide to next page
   'POST /present/next': {controller: 'PresentController',action: 'next',},
   //switch host's slide to previous page
@@ -101,7 +106,7 @@ module.exports.routes = {
   'POST /present/unlock': {controller: 'PresentController',action: 'unlock',},
 
   //end the presentation
-  'POST /present/leave': {controller: 'PresentController',action: 'leave',},
+  'POST /:folder/present/leave': {controller: 'PresentController',action: 'leave',},
 
 
 

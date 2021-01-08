@@ -47,6 +47,42 @@ module.exports = {
         } else {
             return res.notFound();
         }
+    },
+   
+    getRoomSetting: async function(req, res){
+        var model= await Room.findOne({
+            roomId:req.params.room
+        })
+        var user= await User.findOne({
+            id: model.userId
+        })
+        // console.log(model);
+        // console.log(user);
+
+        return res.json({
+            room:model,
+            user:user
+        })
+    },
+
+    addViewerSession: function(req, res){
+       
+        req.session.viewer= req.params.viewer;
+        console.log("viewer session:"+req.session.viewer)
+        return res.json({
+            message: "viewer session created"
+        })
+    },
+
+
+    delViewerSession: function(req, res){
+       
+        req.session.viewer=''
+
+        console.log("viewer session:"+req.session.viewer)
+        return res.json({
+            message: "viewer session discard"
+        })
     }
 };
 

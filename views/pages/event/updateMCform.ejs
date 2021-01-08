@@ -1,0 +1,207 @@
+<form method="post" style="float: left; text-align: left" class="col-12"
+  onsubmit="submitForm(this,'<%= user[0].folder%>','<%= user[0].slideNum%>');return false">
+  <div id="MC-container">
+    <% var index=1%>
+      
+    <% MC.forEach(function(m){ %>
+      <div id="<%=index%>">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque('<%= index%>')">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" 
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required><%=m.question %></textarea>
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px;">
+          <label class="col-sm-1 col-form-label">A:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerA" value="<%=m.answerA%>"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">B:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerB" value="<%=m.answerB%>"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px; padding-bottom: 5px;">
+          <label class="col-sm-1 col-form-label">C:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerC" value="<%=m.answerC%>"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">D:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerD" value="<%=m.answerD%>"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Correct answer</label>
+          </div>
+          <select class="custom-select" id="inputGroupSelect01" name="trueAnswer" required>
+            <% if(m.trueAnswer==m.answerA) { %>
+                <option selected value="A">A</option>
+            <% }else {%>
+                <option value="A">A</option>
+            <%}%>
+            <% if(m.trueAnswer==m.answerB) { %>
+                <option selected value="B">B</option>
+            <% }else {%>
+                <option value="B">B</option>
+            <%}%>
+            <% if(m.trueAnswer==m.answerC) { %>
+                <option selected value="C">C</option>
+            <% }else {%>
+                <option value="C">C</option>
+            <%}%>
+            <% if(m.trueAnswer==m.answerD) { %>
+                <option selected value="D">D</option>
+            <% }else {%>
+                <option value="D">D</option>
+            <%}%>
+            
+          </select>
+        </div>
+      </div>
+      <% }); %>
+      <% index++%>
+  </div>
+
+  
+    <div>
+      <a class="btn btn-primary" href="javascript:;" id="add-new-question">+ Add new question</a>
+    </div>
+    <br><br>
+
+    <row style="float: right;">
+      <input class="btn btn-info" type="submit" />
+    </row>
+</form>
+
+<script>
+
+  let numOfque = parseInt("<%= MC.length%>");
+  //alert(typeof(numOfque));
+  let qindex=numOfque+1;
+  document.getElementById("add-new-question").onclick = function () {
+    let template = `
+    <div id="${qindex}">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque(${qindex})">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" placeholder="Enter the question here..."
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px;">
+          <label class="col-sm-1 col-form-label">A:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerA"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">B:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerB"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px; padding-bottom: 5px;">
+          <label class="col-sm-1 col-form-label">C:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerC"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">D:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerD"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Correct answer</label>
+          </div>
+          <select class="custom-select" id="inputGroupSelect01" name="trueAnswer" required>
+            <option selected disabled>Choose...</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+      </div>
+    `;
+    qindex++;
+    let container = document.getElementById("MC-container");
+    let div = document.createElement("div");
+    div.innerHTML = template;
+    container.appendChild(div);
+    numOfque++;
+  
+  };
+
+  async function submitForm(oFormElement, folder, slideNum) {
+    var formData = new FormData(oFormElement);
+    formData.append('numOfque', numOfque);
+    formData.append('folder', folder);
+    formData.append('slideNum', slideNum);
+    formData.append('insertBefore', '<%=MC[0].insertBefore%>');
+
+    
+    // alert("<%=MC[0].insertBefore%>");
+    // alert('/<%=user[0].folder%>/updateMCform/<%=MC[0].insertBefore%>');
+    var response = await fetch('/<%=user[0].folder%>/updateMCform/<%=MC[0].insertBefore%>', {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+      if(data.message=="invalid update!!"){
+        bootbox.alert(data.message);
+      }else{
+          bootbox.alert({
+            message: data.message,
+            callback: function () {
+              window.close();  
+            }
+          })
+      }
+    
+     
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  };
+
+  async function delque(id) {
+    // alert(id)
+    var element = document.getElementById(id);
+    element.parentNode.removeChild(element);
+    numOfque--;
+  }
+</script>

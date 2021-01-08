@@ -45,18 +45,23 @@ module.exports = {
     },
     voteA: {
       type: 'number',
+      defaultsTo: 0
     },
     voteB: {
       type: 'number',
+      defaultsTo: 0
     },
     voteC: {
       type: 'number',
+      defaultsTo: 0
     },
     voteD: {
       type: 'number',
+      defaultsTo: 0
     },
     audience:{
       type: 'number',
+      defaultsTo: 0
     },
     insertBefore:{
       type:'number',

@@ -11,7 +11,7 @@ module.exports = {
     var model = await User.findOne({ folder: req.params.foldername });
     var folder = req.params.foldername;
     // console.log(model);
-    return res.view("pages/addMCform", {
+    return res.view("pages/event/addMCform", {
       user: model,
     });
   },
@@ -21,6 +21,26 @@ module.exports = {
     var user = JSON.stringify(req.body.user)
     console.log(req.body.slideNum);
 
+    var m= await Event.findOne({
+      type:"Multiple Choice",
+      insertBefore: req.body.insertBefore,
+      folder: req.body.folder
+    })
+    console.log(m);
+    if(m!=null){
+      console.log("MC exist at that page")
+      return res.json({
+        message:"MC already exist at that page. You should update or delete existing one."
+      })
+    }else{
+      console.log("can insert")
+    }
+
+    if(req.body.numOfque<=0){
+      return res.json({
+        message:"No question in the form!!"
+      })
+    }
     // await MC.destroy({
     //   id: { '>': 0 }
     // });
@@ -47,11 +67,6 @@ module.exports = {
         answerB: req.body.answerB,
         answerC: req.body.answerC,
         answerD: req.body.answerD,
-        voteA:0,
-        voteB:0,
-        voteC:0,
-        voteD:0,
-        audience:0,
       });
     }else {
       for(var i=0;i<req.body.numOfque;i++){
@@ -74,11 +89,6 @@ module.exports = {
           answerB: req.body.answerB[i],
           answerC: req.body.answerC[i],
           answerD: req.body.answerD[i],
-          voteA:0,
-          voteB:0,
-          voteC:0,
-          voteD:0,
-          audience:0,
         });
       }
     }
@@ -105,7 +115,7 @@ module.exports = {
     })
     console.log(model2);
 
-    return res.view("pages/updateMCform", {
+    return res.view("pages/event/updateMCform", {
       MC: model,
       user: model2
     });
@@ -116,6 +126,11 @@ module.exports = {
     // console.log("123")
     var body=req.body;
     console.log(body);
+    if(req.body.numOfque<=0){
+      return res.json({
+        message:'invalid update!!'
+      })
+    }
     await MC.destroy({
       folder: body.folder,
       insertBefore: body.insertBefore
@@ -140,11 +155,6 @@ module.exports = {
         answerB: body.answerB,
         answerC: body.answerC,
         answerD: body.answerD,
-        voteA:0,
-        voteB:0,
-        voteC:0,
-        voteD:0,
-        audience:0,
       });
     }else {
       for(var i=0;i<req.body.numOfque;i++){
@@ -158,6 +168,7 @@ module.exports = {
         }else if(req.body.trueAnswer[i]=="D"){
           trueAns=req.body.answerD[i]
         }
+        console.log("ans:"+trueAns);
         await MC.create({
           question: body.question[i],
           trueAnswer: trueAns,
@@ -167,11 +178,6 @@ module.exports = {
           answerB: body.answerB[i],
           answerC: body.answerC[i],
           answerD: body.answerD[i],
-          voteA:0,
-          voteB:0,
-          voteC:0,
-          voteD:0,
-          audience:0,
         });
       }
     }
@@ -186,13 +192,14 @@ module.exports = {
     console.log("req.body:"+JSON.stringify(req.body));
     const qid=req.params.qid;
     const folder=req.params.folder;
+    var m = await MC.find({
+      id:  qid, 
+      folder: folder
+    });
+    console.log("btnradio:"+req.body.btnradio);
+    var mc=m[0];
+
     if(req.body.btnradio){
-      var m = await MC.find({
-        id:  qid, 
-        folder: folder
-      });
-      console.log("btnradio:"+req.body.btnradio);
-      var mc=m[0];
       if(req.body.btnradio==mc.answerA){
         await MC.update({ 
           id: qid
@@ -225,6 +232,26 @@ module.exports = {
         .set({
           voteD: mc.voteD+1,
           audience: mc.audience+1
+        });
+      }
+
+      if(req.body.viewer!=""){
+        var min=new Date().getMinutes();
+        var hour=new Date().getHours();
+        var day=new Date().getDate();
+        var month= new Date().getMonth()+1;
+        var year= new Date().getFullYear();
+
+        var time= day+"/"+month+"/"+year +"  "+hour+":"+min
+        console.log("time:"+time);
+
+        await MClog.create({
+          question: mc.question,
+          folder: mc.folder,
+          viewerName: req.body.viewer,
+          yourAnswer:  req.body.btnradio,
+          trueAnswer: mc.trueAnswer,
+          time: time,
         });
       }
     }

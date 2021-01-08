@@ -52,6 +52,7 @@ module.exports = {
       roomId: roomid,
       userId: user.id,
     }).fetch();
+    
     req.session.roomId = room.roomId;
     
     return res.view("pages/presentation", {
@@ -103,6 +104,21 @@ module.exports = {
   
   leave: async function (req, res) {
     sails.sockets.broadcast(req.session.roomId, "leave");
+    console.log("folder"+req.params.folder);
+    var folder=req.params.folder;
+    await TF.update({ folder: folder }).set({
+      voteTrue: 0,
+      voteFalse: 0,
+      audience:0
+    });
+    await MC.update({ folder: folder }).set({
+      voteA: 0,
+      voteB: 0,
+      voteC: 0,
+      voteD: 0,
+      audience:0
+    });
+    // console.log("reset db")
     return res.ok();
   },
 

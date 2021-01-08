@@ -76,55 +76,11 @@
       </a>
       <div class="col-7 col-lg-4">
       <button type="button" class="btn btn-success"  onclick="startbtn('<%=user.folder %>')">Start</button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        id="deletebtn"
-        onclick="deleteppt('<%=user.folder %>')"
-      >
-        Delete
-      </button>
+      <button type="button" class="btn btn-secondary"  onclick="histbtn('<%=user.folder %>')">History</button>
+      <button type="button" class="btn btn-secondary"  onclick="settingbtn('<%=user.folder %>')">Setting</button>
+      <button type="button" class="btn btn-danger" id="deletebtn" onclick="deleteppt('<%=user.folder %>')">Delete</button>
       </div>
 
-      <div
-        class="modal fade"
-        id="exampleModalCenter"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalCenterTitle"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">
-                Modal title
-              </h5>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">...</div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" class="btn btn-primary">
-                Save changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </li>
     <% index++}); %>
   </ul>
@@ -160,7 +116,7 @@
       alert(response.statusText);
     }
   }
-
+  //delete ppt
   async function deleteppt(foldername) {
     bootbox.confirm('Are you sure to delete?', async function (result) {
       if (result) {
@@ -183,6 +139,11 @@
     });
   }
 
+  //redirect to setting page
+  async function settingbtn(foldername) {
+    window.location.replace("/"+foldername+"/setting");
+  }
+  // start presentation
   async function startbtn(foldername){
     window.location.replace("/"+foldername+"/presenting");
   }

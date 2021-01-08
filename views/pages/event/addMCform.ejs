@@ -1,0 +1,194 @@
+<form method="post" style="float: left; text-align: left" class="col-12"
+  onsubmit="submitForm(this,'<%= user.folder%>','<%= user.slideNum%>');return false">
+  <div id="MC-container">
+    <% var questionID=1%>
+      <div id="<%= questionID %>">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close"
+              style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque('<%= questionID%>')">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" placeholder="Enter the question here..."
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px;">
+          <label class="col-sm-1 col-form-label">A:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerA"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">B:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerB"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px; padding-bottom: 5px;">
+          <label class="col-sm-1 col-form-label">C:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerC"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">D:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerD"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Correct answer</label>
+          </div>
+          <select class="custom-select" id="inputGroupSelect01" name="trueAnswer" required>
+            <option selected disabled>Choose...</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+      </div>
+      <% questionID++%>
+  </div>
+
+
+  <div>
+    <a class="btn btn-primary" href="javascript:;" id="add-new-question">+ Add new question</a>
+  </div>
+  <br><br>
+
+  <row style="float: right;">
+    <label>Insert before Slide</label>
+    <select name="insertBefore">
+      <% var slideNum=user.slideNum %>
+        <% for(var j=1; j<=slideNum;j++){ %>
+          <option value="<%= j %>">
+            <%= j%>
+          </option>
+          <% } %>
+            <option value="<%= j %>">After Slide <%= j-1%>
+            </option>
+    </select>
+    <input class="btn btn-info" type="submit" />
+  </row>
+</form>
+
+<script>
+
+  let numOfque = 1;
+  let qindex = numOfque + 1;
+  document.getElementById("add-new-question").onclick = function () {
+    let template = `
+  
+    <div id="${qindex}">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque(${qindex})">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" placeholder="Enter the question here..."
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px;">
+          <label class="col-sm-1 col-form-label">A:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerA"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">B:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerB"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px; padding-bottom: 5px;">
+          <label class="col-sm-1 col-form-label">C:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerC"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">D:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerD"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Correct answer</label>
+          </div>
+          <select class="custom-select" id="inputGroupSelect01" name="trueAnswer" required>
+            <option selected disabled>Choose...</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+      </div>
+    `;
+    qindex++;
+    let container = document.getElementById("MC-container");
+    let div = document.createElement("div");
+    div.innerHTML = template;
+    container.appendChild(div);
+    numOfque++;
+
+  };
+
+  async function submitForm(oFormElement, folder, slideNum) {
+    var formData = new FormData(oFormElement);
+    formData.append('numOfque', numOfque);
+    formData.append('folder', folder)
+    formData.append('slideNum', slideNum)
+    var response = await fetch('/<%=user.folder%>/submitMCform', {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+      if(data.message=="No question in the form!!"){
+        bootbox.alert("You should set up some questions")
+      }else{
+          bootbox.alert({
+          message: data.message,
+            callback: function () {
+              window.close();
+            }
+          })
+      }
+    
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  };
+
+  async function delque(id) {
+    // alert(id)
+    var element = document.getElementById(id);
+    element.parentNode.removeChild(element);
+    numOfque--;
+  }
+</script>

@@ -13,7 +13,7 @@ module.exports = {
     var model = await User.findOne({ folder: req.params.foldername });
     var folder = req.params.foldername;
     // console.log(model);
-    return res.view("pages/addTFform", {
+    return res.view("pages/event/addTFform", {
       user: model,
     });
   },
@@ -23,15 +23,31 @@ module.exports = {
     console.log(req.body);
     console.log("slide num:" + req.body.slideNum);
 
+    var m= await Event.findOne({
+      type:"True or False",
+      insertBefore: req.body.insertBefore,
+      folder: req.body.folder
+    })
+    console.log(m);
+    if(m!=null){
+      console.log("TF exist at that page")
+      return res.json({
+        message:"True/False already exist at that page. You should update or delete existing one."
+      })
+    }else{
+      console.log("can insert")
+    }
+
+    if(req.body.numOfque<=0){
+      return res.json({
+        message:"No question in the form!!"
+      })
+    }
+
     for (var j = 0; j < req.body.aryQueID.length; j++) {
       console.log(req.body.aryQueID[j]);
     }
-    // await MC.destroy({
-    //   id: { '>': 0 }
-    // });
-    // await Event.destroy({
-    //   id: { '>': 0 }
-    // });
+  
     console.log("selection:" + req.body.aryQueID);
     var selection = "";
     var ans = "";
@@ -44,11 +60,6 @@ module.exports = {
         trueAnswer: ans,
         insertBefore: req.body.insertBefore,
         folder: req.body.folder,
-        voteA: 0,
-        voteB: 0,
-        voteTrue: 0,
-        voteFalse: 0,
-        audience: 0,
       });
     } else {
       for (var i = 0; i < req.body.aryQueID.length; i++) {
@@ -60,9 +71,6 @@ module.exports = {
           trueAnswer: ans,
           insertBefore: req.body.insertBefore,
           folder: req.body.folder,
-          voteTrue: 0,
-          voteFalse: 0,
-          audience: 0,
         });
       }
     }
@@ -99,7 +107,7 @@ module.exports = {
     });
     console.log("model");
     console.log(model);
-    return res.view("pages/updateTFform", {
+    return res.view("pages/event/updateTFform", {
       TF: model,
       user: model2,
     });
@@ -110,6 +118,11 @@ module.exports = {
     // console.log("123")
     var body = req.body;
     console.log(body);
+    if(req.body.numOfque<=0){
+      return res.json({
+        message:"invalid updated!!"
+      })
+    }
     await TF.destroy({
       folder: body.folder,
       insertBefore: body.insertBefore,
@@ -125,11 +138,6 @@ module.exports = {
         trueAnswer: ans,
         insertBefore: body.insertBefore,
         folder: body.folder,
-        voteA: 0,
-        voteB: 0,
-        voteTrue: 0,
-        voteFalse: 0,
-        audience: 0,
       });
     } else {
       for (var i = 0; i < body.aryQueID.length; i++) {
@@ -141,9 +149,6 @@ module.exports = {
           trueAnswer: ans,
           insertBefore: body.insertBefore,
           folder: body.folder,
-          voteTrue: 0,
-          voteFalse: 0,
-          audience: 0,
         });
       }
     }
@@ -158,13 +163,14 @@ module.exports = {
     console.log("req.body:" + JSON.stringify(req.body));
     const qid = req.params.qid;
     const folder = req.params.folder;
-    if (req.body.radio) {
-      var t = await TF.find({
+    var t = await TF.find({
         id: qid,
         folder: folder,
-      });
-      console.log("radio:" + req.body.radio);
-      var tf = t[0];
+    });
+    console.log("radio:" + req.body.radio);
+    var tf = t[0];
+
+    if (req.body.radio) {
       if (req.body.radio == "True") {
         await TF.update({
           id: qid,
@@ -180,6 +186,26 @@ module.exports = {
             audience: tf.audience + 1,
         });
       } 
+    }
+
+    if(req.body.viewer!=""){
+      var min=new Date().getMinutes();
+      var hour=new Date().getHours();
+      var day=new Date().getDate();
+      var month= new Date().getMonth()+1;
+      var year= new Date().getFullYear();
+
+      var time= day+"/"+month+"/"+year +"  "+hour+":"+min
+      console.log("time:"+time);
+
+      await TFlog.create({
+        question: tf.question,
+        folder: tf.folder,
+        viewerName: req.body.viewer,
+        yourAnswer:  req.body.radio,
+        trueAnswer: tf.trueAnswer,
+        time: time,
+      });
     }
 
     return res.json({

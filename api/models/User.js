@@ -35,7 +35,16 @@ module.exports = {
     },
     pngNameNoNum:{
       type: 'string',
-    }
+    },
+    allowScroll:{
+      type: 'boolean',
+      defaultsTo: false
+    },
+    makerecords:{
+      type: 'boolean',
+      defaultsTo: false
+    },
+
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗

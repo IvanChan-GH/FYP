@@ -42,7 +42,7 @@
             <div class="input-group mb-3" style=" " >
               <input id="room" type="text" class="" style="" placeholder="RoomID..." aria-label="Recipient's username" aria-describedby="button-addon2">
               <div class="input-group-append ">
-                <button id="joinbtn" class="btn btn-outline-secondary" style="min-width: 100px;;background-color: coral; color:white" type="button" id="button-addon2">Join</button>
+                <button id="joinbtn" onclick="join()" class="btn btn-outline-secondary" style="min-width: 100px;;background-color: coral; color:white" type="button" id="button-addon2">Join</button>
               </div>
           </li>
           <% if (session.name) { %>
@@ -86,11 +86,42 @@
 </body>
 
 <script>
-  $('#joinbtn').click(function() {
+  async function join(){
        //  alert(document.getElementById("room").value)
         var roomid=document.getElementById("room").value;
+        if(roomid==""){
+          console.log("return")
+          return
+        }
+        var response= await fetch('/roomsetting/'+roomid,{
+            method:"GET",
+            credentials: "same-origin",
+        });
+        if (response.ok) {
+          var data = await response.json();
+          if(data.user.makerecords==true){
+            bootbox.prompt({ 
+                size: "small",
+                title: "Please input your name (required)",
+                callback: async function(result){ 
+                    if(result!=""){
+                        console.log(result)
+                        var response= await fetch('/createsession/'+result,{
+                          method:"POST",
+                          credentials: "same-origin",
+                        });
+                        window.location.href = '/room/'+roomid; 
+                    }     
+                }
+            });  
+          }else{
+            window.location.href = '/room/'+roomid; 
+          }
+        } else {
+          alert(response.statusText);
+        }  
+      
+  };
  
-        window.location.href = '/room/'+roomid;  
-  });
  </script>
 </html>

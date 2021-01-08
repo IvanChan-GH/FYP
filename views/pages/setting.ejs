@@ -1,0 +1,60 @@
+<nav aria-label="breadcrumb" style="background-color: whitesmoke;font-size: 24px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/myfiles">My Files</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Setting (<%= user.fileNameWithoutFormat%>)
+        </li>
+    </ol>
+</nav>
+
+<form method="POST" style="float: left; text-align: left" class="col-12" 
+   action="/<%=user.folder%>/setting/update" onsubmit="submitForm(this);return false">
+   
+    <div class="custom-control custom-switch">
+        <% if(user.allowScroll==true) { %>
+            <input type="checkbox" name="allowScroll" value=true class="custom-control-input" id="customSwitch1" checked>
+        <% } else{ %>
+            <input type="checkbox" name="allowScroll" value=true class="custom-control-input" id="customSwitch1" >
+        <% } %>
+            <label class="custom-control-label" for="customSwitch1">Allow viewer changing page on scroll</label>
+    </div>
+ 
+    <div class="custom-control custom-switch">
+        <% if(user.makerecords==true) { %>
+            <input type="checkbox"  name="makerecord" value=true class="custom-control-input" id="customSwitch2" checked >
+        <% } else { %>
+            <input type="checkbox"  name="makerecord" value=true class="custom-control-input" id="customSwitch2">
+        <% } %>
+            <label class="custom-control-label" for="customSwitch2">Save participants' name and their submission</label>
+    </div>
+    <br>
+    <row>
+        <button class="btn btn-info" type="submit"> Save</button>
+    </row>
+</form>
+
+<script>
+    async function submitForm(oFormElement) {
+        // alert(JSON.stringify(new FormData(oFormElement)))
+        var form =new FormData(oFormElement)
+       
+        var response = await fetch(oFormElement.action, {
+            method: 'POST',
+            credentials: "same-origin",
+            body: form,
+        });
+
+        if (response.ok) {
+            var data = await response.json(); // for res.ok() or res.json()
+            // alert(data.message);
+            console.log(data.message);
+            var msg=data.message
+            bootbox.alert({
+                message: data.message,
+                callback: function () {
+                    window.location.href = '/myfiles';     
+                }
+            })
+        } 
+    }
+</script>

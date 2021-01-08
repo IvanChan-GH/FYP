@@ -151,4 +151,58 @@ module.exports = {
       event: event,
     });
   },
+
+  // ppt setting page
+  Setting: async function(req, res){
+    var user= await User.findOne({
+      folder: req.params.foldername
+    })
+    return res.view("pages/setting",{
+      user: user,
+    })
+  },
+  // update ppt setting
+  updateSetting: async function(req, res){
+      console.log(req.body);
+      var model= await User.findOne({
+        folder:req.params.foldername
+      })
+      console.log('scroll:'+model.allowScroll)
+      console.log('record :'+model.makerecords)
+
+      if(req.body.allowScroll){
+        if(model.allowScroll==false){
+          await User.updateOne({ folder:req.params.foldername })
+            .set({
+              allowScroll: req.body.allowScroll 
+          });
+        }
+      }else{
+        if(model.allowScroll==true){
+          await User.updateOne({ folder:req.params.foldername })
+            .set({
+              allowScroll: false
+          });
+        }
+      }
+      if(req.body.makerecord){
+        if(model.makerecords==false){
+          await User.updateOne({ folder:req.params.foldername })
+          .set({
+            makerecords: req.body.makerecord 
+          });
+        }
+      }else{
+        {
+          if(model.makerecords==true){
+            await User.updateOne({ folder:req.params.foldername })
+            .set({
+              makerecords: false
+            });
+          }
+        }
+      }
+
+      res.json({message:'Saved'})
+  }
 };

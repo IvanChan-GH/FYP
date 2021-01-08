@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)http://localhost:1337/1609913046032/getMCform/1 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Event Interaction System</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="./Event Interaction System_files/bootstrap.min.css" rel="stylesheet">
+
+
+  <!-- Custom fonts for this template -->
+  <link href="./Event Interaction System_files/css" rel="stylesheet">
+  <link href="./Event Interaction System_files/css(1)" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="./Event Interaction System_files/one-page-wonder.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <div class="container">
+      <!-- <a class="navbar-brand" href="/">Event Interaction System</a> -->
+      <a href="http://localhost:1337/myfiles"><span class="navbar-brand">Event Interaction System</span></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> 
+            <div class="input-group mb-3" style=" ">
+              <input id="room" type="text" class="" style="" placeholder="RoomID..." aria-label="Recipient&#39;s username" aria-describedby="button-addon2">
+              <div class="input-group-append ">              
+                <button class="btn btn-outline-secondary" style="min-width: 100px;;background-color: coral; color:white" type="button" id="joinbtn">Join</button>
+              </div>
+          </div></li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="http://localhost:1337/auth/google">Log In</a>
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="masthead text-center text-white">
+    <div class="masthead-content">
+      <div class="container">
+        <form method="post" style="float: left; text-align: left" class="col-12" onsubmit="submitForm(this,&#39;1609913046032&#39;,&#39;25&#39;);return false">
+  <div id="MC-container">
+    
+      
+    
+      <div id="1">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;" id="" onclick="delque(&#39;1&#39;)">
+              <span>×
+            </span></button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" style="background-color: whitesmoke; border: 1px solid cornflowerblue" required="">q1</textarea>
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px;">
+          <label class="col-sm-1 col-form-label">A:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerA" value="1" style="background-color: whitesmoke; border: 1px solid cornflowerblue" required="">
+          </div>
+          <label class="col-sm-1 col-form-label">B:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerB" value="1" style="background-color: whitesmoke; border: 1px solid cornflowerblue" required="">
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px; padding-bottom: 5px;">
+          <label class="col-sm-1 col-form-label">C:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerC" value="1" style="background-color: whitesmoke; border: 1px solid cornflowerblue" required="">
+          </div>
+          <label class="col-sm-1 col-form-label">D:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerD" value="1" style="background-color: whitesmoke; border: 1px solid cornflowerblue" required="">
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Correct answer</label>
+          </div>
+          <select class="custom-select" id="inputGroupSelect01" name="trueAnswer" required="">
+            
+                <option selected="" value="A">A</option>
+            
+            
+                <option selected="" value="B">B</option>
+            
+            
+                <option selected="" value="C">C</option>
+            
+            
+                <option selected="" value="D">D</option>
+            
+            
+          </select>
+        </div>
+      </div>
+      
+      
+  </div>
+
+  
+    <div>
+      <a class="btn btn-primary" href="javascript:;" id="add-new-question">+ Add new question</a>
+    </div>
+    <br><br>
+
+    <row style="float: right;">
+      <input class="btn btn-info" type="submit">
+    </row>
+</form>
+
+<script>
+
+  let numOfque = parseInt("1");
+  //alert(typeof(numOfque));
+  let qindex=numOfque+1;
+  document.getElementById("add-new-question").onclick = function () {
+    let template = `
+    <div id="${qindex}">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque(${qindex})">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Question :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="question" placeholder="Enter the question here..."
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px;">
+          <label class="col-sm-1 col-form-label">A:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerA"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">B:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerB"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 5px; padding-bottom: 5px;">
+          <label class="col-sm-1 col-form-label">C:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerC"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+          <label class="col-sm-1 col-form-label">D:</label>
+          <div class="col-sm-5">
+            <input class="form-control-plaintext" name="answerD"
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required />
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Correct answer</label>
+          </div>
+          <select class="custom-select" id="inputGroupSelect01" name="trueAnswer" required>
+            <option selected disabled>Choose...</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+      </div>
+    `;
+    qindex++;
+    let container = document.getElementById("MC-container");
+    let div = document.createElement("div");
+    div.innerHTML = template;
+    container.appendChild(div);
+    numOfque++;
+  
+  };
+
+  async function submitForm(oFormElement, folder, slideNum) {
+    var formData = new FormData(oFormElement);
+    formData.append('numOfque', numOfque);
+    formData.append('folder', folder);
+    formData.append('slideNum', slideNum);
+    formData.append('insertBefore', '1');
+    // alert("1");
+    // alert('/1609913046032/updateMCform/1');
+    var response = await fetch('/1609913046032/updateMCform/1', {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+     
+      bootbox.alert({
+          message: data.message,
+          callback: function () {
+             window.close();  
+          }
+      })
+     
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  };
+
+  async function delque(id) {
+    // alert(id)
+    var element = document.getElementById(id);
+    element.parentNode.removeChild(element);
+    numOfque--;
+  }
+</script>
+      </div>
+    </div>
+  </header>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-black">
+    <div class="container">
+      <p class="m-0 text-center text-white small">Copyright © Event Interaction System 2020</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="./Event Interaction System_files/jquery.min.js"></script>
+  <script src="./Event Interaction System_files/bootstrap.bundle.min.js"></script>
+  <script src="./Event Interaction System_files/bootbox.min.js"></script>
+  
+
+
+
+
+<script>
+ $('#joinbtn').click(function() {
+      //  alert(document.getElementById("room").value)
+       var roomid=document.getElementById("room").value;
+
+       window.location.href = '/room/'+roomid;  
+ });
+</script>
+</body></html>

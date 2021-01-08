@@ -23,12 +23,15 @@ module.exports = {
     },
     voteTrue: {
       type: 'number',
+      defaultsTo: 0
     },
     voteFalse: {
       type: 'number',
+      defaultsTo: 0
     },
     audience:{
       type: 'number',
+      defaultsTo: 0
     },
     insertBefore:{
       type:'number',
