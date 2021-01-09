@@ -76,7 +76,6 @@ module.exports = {
 
 
     delViewerSession: function(req, res){
-       
         req.session.viewer=''
 
         console.log("viewer session:"+req.session.viewer)

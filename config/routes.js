@@ -108,8 +108,10 @@ module.exports.routes = {
   //end the presentation
   'POST /:folder/present/leave': {controller: 'PresentController',action: 'leave',},
 
-
-
+  //get True/False log info
+  'GET /:folder/getlog/TF/page:pagenum': {controller: 'TFController',action: 'getLogInfo',},
+  //get Multiple choice log info
+  'GET /:folder/getlog/MC/page:pagenum': {controller: 'MCController',action: 'getLogInfo',},
 
 
 

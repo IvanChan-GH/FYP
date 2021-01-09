@@ -271,6 +271,32 @@ module.exports = {
     return res.json({
       result:model
     })
- }
+ },
 
+ getLogInfo: async function (req,res){
+  var allmc= await MClog.find({
+    folder:req.params.folder
+  }).sort([
+      {createdAt:'DESC'},
+      {viewerName: 'ASC'},
+  ])
+  var totalpage= Math.ceil(allmc.length/10);
+  var current= parseInt(req.params.pagenum);
+
+  var start= parseInt(req.params.pagenum)-1+ (parseInt(req.params.pagenum)-1)*9;
+  console.log('start:'+start);
+  var mc=[];
+  for(var i=start; i<start+10; i++){
+    if(allmc[i]){
+      mc[i]=allmc[i];
+    }
+  }
+
+  return res.view("pages/event/MClog", {
+    MC: mc,
+    totalpage:totalpage,
+    current:current,
+    folder:req.params.folder
+  });
+}
 };

@@ -1,0 +1,68 @@
+<nav aria-label="breadcrumb" style="background-color: whitesmoke;font-size: 24px;">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/myfiles">My Files</a></li>
+      <li class="breadcrumb-item active" aria-current="page">
+        Multiple Choice Log
+      </li>
+    </ol>
+  </nav>
+
+<select style="float: right;margin-bottom: 10px;"class="form-select  form-select-lg" onchange="location = this.value;" aria-label="Default select example">
+  <option selected>Multiple Choice</option>
+  <option value="/<%=folder%>/getlog/TF/page1">True/False</option>
+</select>
+
+<table class="table table-hover table-bordered">
+    <thead class="title" >
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Submission</th>
+        <th scope="col">Correct Answer</th>
+        <th scope="col">Question</th>
+        <th scope="col">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% MC.forEach( function(mc,index) { %>
+            <tr>
+                <th scope="row"><%=index+1%></th>
+                <td><%=mc.viewerName%></td>
+                <td><%=mc.yourAnswer%></td>
+                <td><%=mc.trueAnswer%></td>
+                <td><%=mc.question%></td>
+                <td><%=mc.time%></td>
+              </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <a class="page-link" href="/<%=folder%>/getlog/MC/page<%= Math.max(current-1,1)%>">Previous</a>
+          </li>
+          <% for(var q=1; q <= totalpage; q++) { %>
+            <li class="page-item" id="<%=q%>" ><a  class="page-link" href="/<%=folder%>/getlog/MC/page<%=q%>"> <%= q%></a></li>
+          <% } %>
+      <li class="page-item">
+        <a class="page-link" href="/<%=folder%>/getlog/MC/page<%= Math.min(current+1,totalpage)%>">Next</a>
+      </li>
+    </ul>
+  </nav>
+
+
+<script>
+    var pagebtn=document.getElementById('<%=current%>').classList.add("disabled");
+</script>
+<style>
+    .table{
+        background-color: white;
+    }
+    .title{
+        font-weight: bold;
+        color: rgb(48, 48, 248);
+        font-size: 18px;
+    }
+</style>
+

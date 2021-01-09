@@ -26,7 +26,7 @@ module.exports = {
     }) (req, res, next);
   },
   
-  logout: function(req, res) {
+  logout: async function(req, res) {
     console.log("logout");
     req.session.name = "";
     req.session.email = "";

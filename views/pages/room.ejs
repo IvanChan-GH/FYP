@@ -8,14 +8,14 @@
                             <% var tf = TFs.filter(e => e.insertBefore  == page) %>
                             <% tf.forEach(function(t,index) { %>
                             <section class="question">
-                                <div><%= t.question %>123</div>
-                                <br><br>
+                                <div><%= t.question %></div>
+                                <br>
                                 <form id="tfform<%= index %>">
                                     <div>
                                         <input type="radio" name="radio" value="True"> True
                                         <br>
                                         <input type="radio" name="radio" value="False"> False   
-                                        <br>
+                                        <br><br>
                                         <button type="button" disabled value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
                                     </div>
                                 </form>
@@ -218,7 +218,7 @@
 
 <style>
 
-#room-id{
+    #room-id{
         background-color: #ffc107;
         color: black;
     }
