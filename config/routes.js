@@ -36,15 +36,20 @@ module.exports.routes = {
   "POST /upload": { controller: "FileController", action: "upload" },
   "POST /deletefolder/:foldername": {controller: "FileController",action: "deleteFolder",},
 
-  // redirect to multiple choice form interface
+  // redirect to multiple choice set up form 
   "GET /:foldername/MCform": {controller: "MCController",action: "addMCform",},
   // Submit Multiple choice form
   "POST /:foldername/submitMCform": {controller: "MCController",action: "submitMCform",},
 
-  // True/False form interface
+  // True/False set up form 
   "GET /:foldername/TFform": {controller: "TFController",action: "addTF",},
   // Submit  True/False  form
   "POST /:foldername/submitTFform": {controller: "TFController",action: "submitTFform",},
+
+  // voting set up form 
+  "GET /:foldername/Votingform": {controller: "VotingController",action: "addvoting",},
+  // Submit  voting set up form
+  "POST /:foldername/submitVotingform": {controller: "VotingController",action: "submitvotingform",},
 
   //redirect to multiple choice update form interface
   "GET /:foldername/getMCform/:insertBefore": {controller: "MCController",action: "getMCform",},
@@ -63,6 +68,16 @@ module.exports.routes = {
   "POST /:foldername/TFvoting/:qid" : {controller: "TFController",action: "TFvoting",},
   // get TF voting result
   "GET /TF/:id/getvotingresult": {controller: "TFController",action: "getvotingresult",},
+
+  //redirect to voting update form interface
+  "GET /:foldername/getVotingform/:insertBefore": {controller: "VotingController",action: "getVotingform",},
+  //Update voting form data
+  "POST /:foldername/updateVotingform/:insertBefore": {controller: "VotingController",action: "updateVotingform",}, 
+  // voting
+  "POST /:foldername/Voting/:qid" : {controller: "VotingController",action: "voting",},
+  // get voting result
+  "GET /Voting/:id/getvotingresult": {controller: "VotingController",action: "getvotingresult",},
+
 
   // Remove event in panel
   "POST /:foldername/removeEvent": {controller: "EventController",action: "deleteEvent",},

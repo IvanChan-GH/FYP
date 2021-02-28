@@ -57,7 +57,28 @@
                                 </form>
                             </section>                            
                             <% }) %>
-                    <% } %>    
+                    <% } else if (event.type=="Voting"){  %> 
+                          <% var v = Votes.filter(e => e.insertBefore  == page) %>
+                          <% v.forEach(function(v,index) { %>
+                          <section class=" question">
+                              <div style="text-align: left"><%= v.title %></div>
+                              <br>
+                              <form id="voteform<%= index %>">
+                              <div style=""  >
+                                  <% v.arrayopt.forEach(function(opt,index) { %>
+                                  <div class="form-check">
+                                      <input class="form-check-input" type="radio" name="btnradio" value="<%= opt%>" id="flexRadioDefault1">
+                                      <label class="form-check-label" for="btnradio1"><%= opt%>    </label>               
+                                  </div>
+                                  <% }) %>
+                                  <br>
+                                  <button type="button" value="Submit" class="btn btn-primary submit" id="btn-mc" onclick="Voting('<%= v.id %>','<%= user.folder %>', 'voteform<%= index %>')">Submit</button>
+                                  <button type="button" class="btn btn-success" onclick="Votingresult('<%= v.id %>')">Result</button>
+                              </div>
+                              </form>
+                          </section>                            
+                          <% }) %>
+                    <% } %>   
             <% }) %>
             <!--  ppt slides -->
             <% if(page!=slides.length+1) { %>
@@ -141,7 +162,7 @@
         // alert(qid+" ,"+folder);
         formData.append('qid', qid);
         formData.append('folder', folder);
-        formData.append('viewer', viewer);
+        formData.append('viewer', '');
      
         var response = await fetch('/'+folder+'/MCvoting/'+qid, {
           method: 'POST',
@@ -204,7 +225,7 @@
         // alert(qid+" ,"+folder);
         formData.append('qid', qid);
         formData.append('folder', folder);
-        formData.append('viewer', viewer);
+        formData.append('viewer', '');
         var response = await fetch('/'+folder+'/TFvoting/'+qid, {
           method: 'POST',
           credentials: "same-origin",
@@ -257,6 +278,71 @@
         }  
     };
     
+    async function Voting(qid,folder,formid){
+        // alert("formid:"+formid);
+        // alert('/'+folder+'/Voting/'+qid)
+        const form = document.getElementById(formid);
+        const formData = new FormData(form);
+
+        // alert(qid+" ,"+folder);
+        formData.append('qid', qid);
+        formData.append('folder', folder);
+        formData.append('viewer', '');
+      
+        var response = await fetch('/'+folder+'/Voting/'+qid, {
+          method: 'POST',
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+        //   alert(data.message);
+          var response = await fetch('/present/hostforward', {
+                method: 'POST',
+                credentials: "same-origin",
+          });
+          slide.goNext();
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);      
+        }  
+    };
+    async function Votingresult(qid){
+        console.log(qid);
+        var response = await fetch('/Voting/'+qid+'/getvotingresult', {
+          method: 'GET',
+          credentials: "same-origin",
+        
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+          var result=data.result;
+        //   alert(JSON.stringify(result));
+        //   console.log(result);
+
+          var template="<div class='result'>";
+          for(var len=0;len<result.arrayopt.length;len++){
+            template+="<div>"+ result.arrayopt[len]+": " +result.arrayvotes[len]+ "</div>";
+          }
+          template+="</div>"
+          bootbox.alert({
+            size: "large",
+            title: result.title,
+            message: template,
+            callback: function(){ /* your callback code */ }
+          })
+          
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);
+        }  
+    };
     
    
 </script>

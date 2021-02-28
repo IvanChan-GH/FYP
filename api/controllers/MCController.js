@@ -114,7 +114,7 @@ module.exports = {
       folder: req.params.foldername,
     })
     console.log(model2);
-
+    
     return res.view("pages/event/updateMCform", {
       MC: model,
       user: model2

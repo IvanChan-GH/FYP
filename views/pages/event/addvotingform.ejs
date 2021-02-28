@@ -1,0 +1,188 @@
+<form method="post" style="float: left; text-align: left" class="col-12"
+  onsubmit="submitForm(this,'<%= user.folder%>','<%= user.slideNum%>');return false">
+  <div id="voting-container">
+        <% var questionID=1%>
+        <div id="<%= questionID %>">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="input-group">
+                        <input type="text" name="title1" class="form-control m-input" placeholder="Title" required>  
+                        <button type="button" class="close"
+                            style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+                            id="" onclick="delque('<%= questionID%>')">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="inputFormRow">
+                        <div class="input-group">
+                            <input type="text" name="options1" class="form-control m-input" placeholder="Enter option" autocomplete="off" required>
+                            <div class="input-group-append">                
+                                <button onclick="delopt(1)" id="removeopt1" type="button" class="btn btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inputFormRow">
+                        <div class="input-group">
+                            <input type="text" name="options1" class="form-control m-input" placeholder="Enter option" autocomplete="off" required>
+                            <div class="input-group-append">                
+                                <button onclick="delopt(2)" id="removeopt2" type="button" class="btn btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="newRow1"></div>
+                    <button onclick="addopt(1)" type="button" class="btn btn-info">Add option</button>
+                </div>
+            </div>
+            <br>
+        </div>
+  </div>
+
+  <div>
+    <a class="btn btn-primary" href="javascript:;" id="add-new-question">+ Add new title</a>
+  </div>
+  <br><br>
+
+  <row style="float: right;">
+    <label>Insert before Slide</label>
+    <select name="insertBefore">
+      <% var slideNum=user.slideNum %>
+        <% for(var j=1; j<=slideNum;j++){ %>
+          <option value="<%= j %>">
+            <%= j%>
+          </option>
+          <% } %>
+            <option value="<%= j %>">After Slide <%= j-1%>
+            </option>
+    </select>
+    <input class="btn btn-info" type="submit" />
+  </row>
+
+  </form>
+
+<script>
+    let numOfque=1;
+    let curindex=1;
+    let qindex=2;
+    let removeopt=3;
+
+    //add  new option    
+    async function addopt(id) {
+
+            var html = '';
+            html += '<div class="inputFormRow">';
+            html += '<div class="input-group">';   
+            html += '<input type="text" name="options'+id+'" class="form-control m-input" placeholder="Enter option" autocomplete="off" required> ';
+            html += '<div class="input-group-append">';
+            html += '<button onclick="delopt('+removeopt+')" id="removeopt'+removeopt+'" type="button" class="btn btn-danger">Remove</button>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            // document.getElementById('newRow').innerHTML;
+            let container =  document.getElementById('newRow'+id);
+            let div = document.createElement("div");
+            div.innerHTML = html;
+            container.appendChild(div);
+            removeopt++;
+        }
+    
+        // remove option
+    async function delopt(id) {
+            document.getElementById('removeopt'+id).closest('.inputFormRow').remove();
+        }
+        
+    //add new title
+    document.getElementById("add-new-question").onclick = function () {
+        let template = `
+    
+        <div id="${qindex}">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="input-group">
+                        <input type="text" name="title${qindex}" class="form-control m-input" placeholder="Title" required>
+                        <button type="button" class="close"
+                            style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+                            id="" onclick="delque(${qindex})">
+                            <span>&times;</span>
+                        </button>  
+                    </div>
+                    <div class="inputFormRow">
+                        <div class="input-group">
+                            <input type="text" name="options${qindex}" class="form-control m-input" placeholder="Enter option" autocomplete="off" required>
+                            <div class="input-group-append">                
+                                <button onclick="delopt(${removeopt})" id="removeopt${removeopt}" type="button" class="btn btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inputFormRow">
+                        <div class="input-group">
+                            <input type="text" name="options${qindex}" class="form-control m-input" placeholder="Enter option" autocomplete="off" required>
+                            <div class="input-group-append">                
+                                <button onclick="delopt(${removeopt+1})" id="removeopt${removeopt+1}" type="button" class="btn btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="newRow${qindex}"></div>
+                    <button onclick="addopt(${qindex})" type="button" class="btn btn-info">Add option</button>
+                </div>
+            </div>
+            <br>
+        </div>    
+       
+        `;
+        
+        let container = document.getElementById("voting-container");
+        let div = document.createElement("div");
+        div.innerHTML = template;
+        container.appendChild(div);
+        qindex++;
+        removeopt+=2;
+        numOfque++;
+        curindex++;
+
+  };
+  // remove title
+  async function delque(id) {
+    var element = document.getElementById(id);
+    element.parentNode.removeChild(element);
+    numOfque--;
+  }
+  async function submitForm(oFormElement, folder, slideNum) {
+    var formData = new FormData(oFormElement);
+    formData.append('numOfque', numOfque);
+    formData.append('folder', folder);
+    formData.append('slideNum', slideNum);
+    formData.append('curindex', curindex);
+    var response = await fetch('/<%=user.folder%>/submitVotingform', {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+      if(data.message=="No question in the form!!"){
+        bootbox.alert("You should set up some questions.")
+      }else if(data.message=="You should provide more than one option for each title"){
+        bootbox.alert("You should provide more than one option for each title.")
+      }else{
+          bootbox.alert({
+          message: data.message,
+            callback: function () {
+              window.close();
+            }
+          })
+      }
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  };
+
+</script>

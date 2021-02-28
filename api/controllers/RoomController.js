@@ -24,6 +24,14 @@ module.exports = {
             var TFs = await TF.find({
                  folder: name,
             });
+            var Votes= await Voting.find({
+                folder: name,
+            });
+            var arrayoption
+            for(var i=0;i<Votes.length; i++){
+                arrayoption=Votes[i].options.split(',');
+                Votes[i].arrayopt=arrayoption;
+            }
             var Events = await Event.find({
                 folder: name,
             }).sort([
@@ -39,6 +47,7 @@ module.exports = {
             return res.view('pages/room', {
                 MCs: MCs,
                 TFs: TFs,
+                Votes: Votes,
                 Events: Events,
                 user: user,
                 slides: slides,

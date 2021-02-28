@@ -11,24 +11,34 @@ module.exports = {
     console.log(req.body.folder);
     console.log(req.body.type);
     console.log(req.body.insertBefore);
-    if(req.body.type=="Multiple Choice"){
-        await MC.destroy({
-            folder:req.body.folder,
-            insertBefore:req.body.insertBefore
-        });
-    }else if(req.body.type=="True or False"){
+    if (req.body.type == "Multiple Choice") {
+      await MC.destroy({
+        folder: req.body.folder,
+        insertBefore: req.body.insertBefore,
+      });
+    } else if (req.body.type == "True or False") {
       await TF.destroy({
-        folder:req.body.folder,
-        insertBefore:req.body.insertBefore
-    });
+        folder: req.body.folder,
+        insertBefore: req.body.insertBefore,
+      });
+    }else if (req.body.type == "Voting") {
+      await Voting.destroy({
+        folder: req.body.folder,
+        insertBefore: req.body.insertBefore,
+      });
     }
+
+    // await Voting.destroy({
+    //     id: { '>': 0 }
+    // });
+    
     await Event.destroy({
-        type:req.body.type,
-        folder:req.body.folder,
-        insertBefore:req.body.insertBefore
+      type: req.body.type,
+      folder: req.body.folder,
+      insertBefore: req.body.insertBefore,
     });
     return res.json({
-        message:"Event removed!"
-    })
+      message: "Event removed!",
+    });
   },
 };
