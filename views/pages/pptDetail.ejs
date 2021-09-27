@@ -32,14 +32,21 @@
                     </a>
                     <a class="col-4 col-lg-2" style="color: whitesmoke;float: left; " href="/<%=event[j].folder%>/getTFform/<%= event[j].insertBefore%>" target="_blank"><u>True or False </u></a>
                   </div>
-                <% } else if(event[j].type=="Voting") {%>
+                <%} else if(event[j].type=="Voting") {%>
                   <div style="padding-bottom: 30-px;" >
                     <a href="/<%=event[j].folder%>/getVotingform/<%= event[j].insertBefore%>" target="_blank">
                     <img class="col-8 col-lg-4 icon" style="float:left ;padding-bottom: 20px;" src="/images/voting.png">    
                     </a>
                     <a class="col-4 col-lg-2" style="color: whitesmoke;float: left; " href="/<%=event[j].folder%>/getVotingform/<%= event[j].insertBefore%>" target="_blank"><u>Voting </u></a>
                   </div>
-              <% } %>  
+                <%}else if(event[j].type=="Tag Cloud") {%>
+                  <div style="padding-bottom: 30-px;" >
+                    <a href="/<%=event[j].folder%>/getTagCloudform/<%= event[j].insertBefore%>" target="_blank">
+                    <img class="col-8 col-lg-4 icon" style="float:left ;padding-bottom: 20px;" src="/images/tagcloud.jpg">    
+                    </a>
+                    <a class="col-4 col-lg-2" style="color: whitesmoke;float: left; " href="/<%=event[j].folder%>/getTagCloudform/<%= event[j].insertBefore%>" target="_blank"><u>Tag Cloud </u></a>
+                  </div>
+                <%} %>
             <% } %>
           <% } %>
           <% if(i!=totalpage+1) {%>
@@ -74,6 +81,7 @@
           <a class="dropdown-item" href="/<%= user.folder%>/MCform" target="_blank">Multiple Choice</a>
           <a class="dropdown-item" href="/<%= user.folder%>/TFform" target="_blank">True/False</a>
           <a class="dropdown-item" href="/<%= user.folder%>/Votingform" target="_blank">Voting</a>
+          <a class="dropdown-item" href="/<%= user.folder%>/Tagcloudform" target="_blank">Tag Cloud</a>
         </div>
       </span>
     </li>
@@ -93,6 +101,8 @@
         <a href="/<%=event[k].folder%>/getTFform/<%= event[k].insertBefore%>" target="_blank"><u><%= event[k].type%> </u></a>
       <% } else if(event[k].type=="Voting") {%>
         <a href="/<%=event[k].folder%>/getVotingform/<%= event[k].insertBefore%>" target="_blank"><u><%= event[k].type%> </u></a>
+      <% }  else if(event[k].type=="Tag Cloud") {%>
+        <a href="/<%=event[k].folder%>/getTagcloudform/<%= event[k].insertBefore%>" target="_blank"><u><%= event[k].type%> </u></a>
       <% } %>
       <% if(event[k].insertBefore<=event[k].slideNum) {%>
         <label style="float: right;">Before Slide <%= event[k].insertBefore%>&nbsp;</label>

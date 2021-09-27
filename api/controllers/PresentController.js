@@ -30,6 +30,9 @@ module.exports = {
         Votes[i].arrayopt=arrayoption;
     }
 
+    var TCs= await Tagcloud.find({
+      folder: name,
+    });
 
     var Events = await Event.find({
       folder: name,
@@ -59,10 +62,12 @@ module.exports = {
         console.log(sameroomid);
       }
     }
-    
+    var total=user.slideNum+MCs.length+TFs.length+Votes.length;
+
     const room = await Room.create({
       roomId: roomid,
       userId: user.id,
+      totalPage: total,
     }).fetch();
     
     req.session.roomId = room.roomId;
@@ -71,6 +76,7 @@ module.exports = {
       MCs: MCs,
       TFs: TFs,
       Votes: Votes,
+      TCs: TCs,
       Events: Events,
       user: user,
       slides: slides,
@@ -78,6 +84,7 @@ module.exports = {
   },
 
   connect: function (req, res) {
+    console.log("backend connecting")
     sails.sockets.join(req, req.session.roomId);
     return res.ok();
   },
@@ -86,9 +93,17 @@ module.exports = {
     sails.sockets.broadcast(req.session.roomId, "previous");
     var room = await Room.findOne({ roomId: req.session.roomId });
     if (room) {
-      await Room.update({ roomId: req.session.roomId }).set({
-        currentPage: room.currentPage - 1,
-      });
+
+      if(room.currentPage-1==0){
+        await Room.update({ roomId: req.session.roomId }).set({
+          currentPage: room.totalPage,
+        });
+      }else{
+        await Room.update({ roomId: req.session.roomId }).set({
+          currentPage: room.currentPage - 1,
+        });
+      }
+      
     }
     return res.ok();
   },
@@ -96,21 +111,48 @@ module.exports = {
   next: async function (req, res) {
     sails.sockets.broadcast(req.session.roomId, "next");
     var room = await Room.findOne({ roomId: req.session.roomId });
-    if (room) {
+    if(room.currentPage+1>room.totalPage){
+      await Room.update({ roomId: req.session.roomId }).set({
+        currentPage: 1,
+      });
+    }else{
       await Room.update({ roomId: req.session.roomId }).set({
         currentPage: room.currentPage + 1,
       });
     }
+
     return res.ok();
   },
 
   //host's slide move forward
   hostforward: async function(req,res){
     var room = await Room.findOne({ roomId: req.session.roomId });
-    if (room) {
+    if(room.currentPage+1>room.totalPage){
+      await Room.update({ roomId: req.session.roomId }).set({
+        currentPage: 1,
+      });
+    }else{
       await Room.update({ roomId: req.session.roomId }).set({
         currentPage: room.currentPage + 1,
       });
+    }
+    return res.ok();
+  },
+  //host's slide move backward
+  hostbackward: async function(req,res){
+    var room = await Room.findOne({ roomId: req.session.roomId });
+    if (room) {
+
+      if(room.currentPage-1==0){
+        await Room.update({ roomId: req.session.roomId }).set({
+          currentPage: room.totalPage,
+        });
+      }else{
+        await Room.update({ roomId: req.session.roomId }).set({
+          currentPage: room.currentPage - 1,
+        });
+      }
+      
     }
     return res.ok();
   },
@@ -131,7 +173,25 @@ module.exports = {
       voteD: 0,
       audience:0
     });
-    // console.log("reset db")
+    await Voting.update({ folder: folder }).set({
+      votes:"",
+    });
+
+    var v= await Voting.find({folder:folder});
+    for(var i=0;i<v.length;i++){
+      var str=v[i].options;
+      console.log("str"+str);
+      var ary=str.split(',');
+      var vote = "0";
+      for (var j = 1; j< ary.length; j++) {
+        vote += ",0";
+      }
+      await Voting.updateOne({ id: v[i].id })
+      .set({
+        votes: vote
+      });
+    }
+    // co nsole.log("reset db")
     return res.ok();
   },
 

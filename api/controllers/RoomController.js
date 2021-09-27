@@ -32,6 +32,10 @@ module.exports = {
                 arrayoption=Votes[i].options.split(',');
                 Votes[i].arrayopt=arrayoption;
             }
+            var TCs= await Tagcloud.find({
+                folder: name,
+            });
+
             var Events = await Event.find({
                 folder: name,
             }).sort([
@@ -48,6 +52,7 @@ module.exports = {
                 MCs: MCs,
                 TFs: TFs,
                 Votes: Votes,
+                TCs: TCs,
                 Events: Events,
                 user: user,
                 slides: slides,

@@ -35,6 +35,8 @@ module.exports.routes = {
   //upload and delete ppt files
   "POST /upload": { controller: "FileController", action: "upload" },
   "POST /deletefolder/:foldername": {controller: "FileController",action: "deleteFolder",},
+  //import entired ppt folder and events from other user
+  "POST /importfolder/:accesscode": {controller: "FileController",action: "importFolder",},
 
   // redirect to multiple choice set up form 
   "GET /:foldername/MCform": {controller: "MCController",action: "addMCform",},
@@ -50,6 +52,11 @@ module.exports.routes = {
   "GET /:foldername/Votingform": {controller: "VotingController",action: "addvoting",},
   // Submit  voting set up form
   "POST /:foldername/submitVotingform": {controller: "VotingController",action: "submitvotingform",},
+
+  // voting set up tag cloud 
+  "GET /:foldername/Tagcloudform": {controller: "TagcloudController",action: "addTagcloud",},
+  // Submit  tag cloud set up form
+  "POST /:foldername/submitTagcloudform": {controller: "TagcloudController",action: "submitTagcloudform",},
 
   //redirect to multiple choice update form interface
   "GET /:foldername/getMCform/:insertBefore": {controller: "MCController",action: "getMCform",},
@@ -78,6 +85,15 @@ module.exports.routes = {
   // get voting result
   "GET /Voting/:id/getvotingresult": {controller: "VotingController",action: "getvotingresult",},
 
+  //redirect to Tag Cloud update form interface
+  "GET /:foldername/getTagcloudform/:insertBefore": {controller: "TagcloudController",action: "getTagcloudform",},
+  //Update Tagcloud form data
+  "POST /:foldername/updateTagcloudform/:insertBefore": {controller: "TagcloudController",action: "updateTagcloudform",}, 
+  // submit words Tagcloud
+  "POST /:foldername/Tagcloud/:qid" : {controller: "TagcloudController",action: "submitwords",},
+  // get Tagcloud result
+  "GET /Tagcloud/:id/getTagcloudresult": {controller: "TagcloudController",action: "getTagcloudresult",},
+
 
   // Remove event in panel
   "POST /:foldername/removeEvent": {controller: "EventController",action: "deleteEvent",},
@@ -90,6 +106,7 @@ module.exports.routes = {
       layout: 'layouts/pptLayout'
     }
   },
+
 
   //get room setting info
   'GET /roomsetting/:room': {controller: 'RoomController',action: 'getRoomSetting',},
@@ -107,13 +124,18 @@ module.exports.routes = {
     }
   },
   
+  // socket connect
+  "POST /present/connect": {controller: "PresentController",action: "connect",},
 
   //switch host's and audiences' slide to previous page
   'POST /present/previous': {controller: 'PresentController',action: 'previous',},
   //switch host and audiences slide to next page
   'POST /present/next': {controller: 'PresentController',action: 'next',},
   //switch host's slide to previous page
+  'POST /present/hostbackward': {controller: 'PresentController',action: 'hostbackward',},
+  //switch host's slide to next page
   'POST /present/hostforward': {controller: 'PresentController',action: 'hostforward',},
+
 
   //lock audience's screen
   'POST /present/lock': {controller: 'PresentController',action: 'lock',},
@@ -127,8 +149,10 @@ module.exports.routes = {
   'GET /:folder/getlog/TF/page:pagenum': {controller: 'TFController',action: 'getLogInfo',},
   //get Multiple choice log info
   'GET /:folder/getlog/MC/page:pagenum': {controller: 'MCController',action: 'getLogInfo',},
-
-
+  //get Voting log info
+  'GET /:folder/getlog/Voting/page:pagenum': {controller: 'VotingController',action: 'getLogInfo',},
+  //get Tagcloud log info
+  'GET /:folder/getlog/Tagcloud/page:pagenum': {controller: 'TagcloudController',action: 'getLogInfo',},
 
 
 

@@ -237,6 +237,9 @@ module.exports = {
 
       if(req.body.viewer!=""){
         var min=new Date().getMinutes();
+        if(min<10){
+          min= "0"+min
+        }
         var hour=new Date().getHours();
         var day=new Date().getDate();
         var month= new Date().getMonth()+1;

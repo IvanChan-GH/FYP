@@ -26,6 +26,11 @@ module.exports = {
         folder: req.body.folder,
         insertBefore: req.body.insertBefore,
       });
+    }else if (req.body.type == "Tag Cloud") {
+      await Tagcloud.destroy({
+        folder: req.body.folder,
+        insertBefore: req.body.insertBefore,
+      });
     }
 
     // await Voting.destroy({

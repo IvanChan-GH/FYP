@@ -12,17 +12,18 @@
                                 <div><%= t.question %></div>
                                 <br>
                                 <form id="tfform<%= index %>">
-                                    <div>
+                                    
                                       <div class="form-check">
-                                        <input type="radio" name="radio" value="True"> True
+                                        <input class="form-check-input" type="radio" name="radio" value="True"> True
                                       </div>
                                       <div class="form-check">
-                                        <input type="radio" name="radio" value="False"> False   
+                                        <input class="form-check-input" type="radio" name="radio" value="False"> False   
                                       </div>
-                                        <button type="button" value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
-                                        <button type="button" class="btn btn-success" onclick="TFresult('<%= t.id %>')">Result</button>
+                                      <br>
+                                      <button type="button" value="Submit" class="btn btn-primary submit" id="btn-tf" onclick="TFvoting('<%= t.id%>','<%= user.folder%>','tfform<%= index %>')">Submit</button>
+                                      <button type="button" class="btn btn-success" onclick="TFresult('<%= t.id %>')">Result</button>
                                       
-                                    </div>
+                                   
                                 </form>
                             </section>
                             <% }) %>
@@ -36,19 +37,19 @@
                                 <div style=""  >
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerA%>" id="flexRadioDefault1">
-                                        <label class="form-check-label" for="btnradio1"><%= mc.answerA%>    </label>               
+                                        <label class="form-check-label" for="btnradio1">A: <%= mc.answerA%>    </label>               
                                      </div>
                                      <div class="form-check">
                                         <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerB%>" id="flexRadioDefault1">
-                                        <label class="form-check-label" for="btnradio1"><%= mc.answerB%>    </label>               
+                                        <label class="form-check-label" for="btnradio1">B: <%= mc.answerB%>    </label>               
                                      </div>
                                      <div class="form-check">
                                         <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerC%>" id="flexRadioDefault1">
-                                        <label class="form-check-label" for="btnradio1"><%= mc.answerC%>    </label>               
+                                        <label class="form-check-label" for="btnradio1">C: <%= mc.answerC%>    </label>               
                                      </div>
                                      <div class="form-check">
                                         <input class="form-check-input" type="radio" name="btnradio" value="<%= mc.answerD%>" id="flexRadioDefault1">
-                                        <label class="form-check-label" for="btnradio1"><%= mc.answerD%>    </label>               
+                                        <label class="form-check-label" for="btnradio1">D: <%= mc.answerD%>    </label>               
                                      </div>
                                     <br>
                                     <button type="button" value="Submit" class="btn btn-primary submit" id="btn-mc" onclick="MCvoting('<%= mc.id %>','<%= user.folder %>', 'mcform<%= index %>')">Submit</button>
@@ -78,7 +79,24 @@
                               </form>
                           </section>                            
                           <% }) %>
-                    <% } %>   
+                    <% } else if (event.type=="Tag Cloud"){  %> 
+                      <% var v = TCs.filter(e => e.insertBefore  == page) %>
+                      <% v.forEach(function(v,index) { %>
+                      <section class=" question">
+                          <div style="text-align: left"><%= v.title %></div>
+                          <br>
+                          <form id="tcform<%= index %>">
+                          <div style=""  >
+                            <textarea rows="4" class="form-control-plaintext" name="words" placeholder="Input... ..."
+                            style="background-color: whitesmoke; border: 1px solid cornflowerblue; max-width: 800px;font-size: 20pt;" required></textarea>
+                              <br>
+                              <button type="button" value="Submit" class="btn btn-primary submit" id="btn-mc" onclick="Tagcloud('<%= v.id %>','<%= user.folder %>', 'tcform<%= index %>')">Submit</button>
+                              <button type="button" class="btn btn-success" onclick="Tagcloudresult('<%= v.id %>')">Result</button>
+                          </div>
+                          </form>
+                      </section>                            
+                      <% }) %>
+                <% } %>  
             <% }) %>
             <!--  ppt slides -->
             <% if(page!=slides.length+1) { %>
@@ -92,7 +110,9 @@
     <div class="control-bar col-12">
         <button id="btn-previous" type="button" class="btn btn-lg btn-info col-1"><<</button>
         <button id="btn-next" type="button" class="btn btn-lg btn-info col-1">>></button>
-        <button id="btn-lock" stype="font-size:40px !important" type="button" class="btn btn-lg btn-info col-2">Lock</button>
+        <button id="btn-previous-hostonly" type="button" class="btn btn-lg btn-info col-1" style="display: none;"><<</button>
+        <button id="btn-next-hostonly" type="button" class="btn btn-lg btn-info col-1" style="display: none;">>></button>
+        <button id="btn-lock" stype="font-size:40px !important" type="button" class="btn btn-lg btn-info col-2" >Lock</button>
         <button id="btn-unlock" type="button" class="btn btn-lg btn-info col-2">Unlock</button>
         <button id="room-id" type="button" class="btn btn-lg  btn-warning col-2" disabled>Room: <%=req.session.roomId%></button>
         <button id="btn-leave" type="button" class="btn btn-lg btn-danger col-2" onclick="leave('<%= user.folder%>')">Leave</button>            
@@ -104,6 +124,8 @@
  
 
 <script src="/js/webslides.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script type="text/javascript" src="/js/TagCloud.min.js"></script>
 <script>
 
     const slide = new WebSlides({
@@ -128,6 +150,18 @@
         io.socket.post('/present/next', {}, function(data, response) {
         })
     });
+    $('#btn-previous-hostonly').click(function() {
+        console.log('host switch only <<');
+        slide.goPrev();
+        io.socket.post('/present/hostbackward', {}, function(data, response) {
+        })
+    });
+    $('#btn-next-hostonly').click(function() {
+      console.log('host switch only >>');
+        slide.goNext();
+        io.socket.post('/present/hostforward', {}, function(data, response) {
+        })
+    });
     async function leave(folder){
         bootbox.confirm("Are you sure to leave?", function(result){
               if(result){
@@ -141,13 +175,23 @@
     };
     $('#btn-lock').click(function() {
         io.socket.post('/present/lock', {}, function(data, response) {
-        
         })
+
+        document.getElementById("btn-previous-hostonly").style.display = "none";
+        document.getElementById("btn-next-hostonly").style.display = "none";
+
+        document.getElementById("btn-previous").style.display = "inline";
+        document.getElementById("btn-next").style.display = "inline";
     });
     $('#btn-unlock').click(function() {
         io.socket.post('/present/unlock', {}, function(data, response) {
-        
         })
+        document.getElementById("btn-previous-hostonly").style.display = "inline";
+        document.getElementById("btn-next-hostonly").style.display = "inline";
+
+        document.getElementById("btn-previous").style.display = "none";
+        document.getElementById("btn-next").style.display = "none";
+     
     });
     $('#btn-grid').click(function() {
         document.getElementById('viewslides').click();
@@ -201,14 +245,60 @@
           console.log(result);
           bootbox.alert({
             size: "large",
-            title: result.question,
-            message:"<div class='result'><div>"+result.answerA+": " +result.voteA+ "</div>"+
-                    "<div>"+result.answerB+": " +result.voteB+"</div>"+
-                    "<div>"+result.answerC+": " +result.voteC+"</div>"+
-                    "<div>"+result.answerD+": " +result.voteD+"</div><br>"+
-                    "<div>Correct answer: "+result.trueAnswer+"<div></div>",
-            callback: function(){ /* your callback code */ }
-          })
+            title: result.question+'<br>'+'Answer: '+'<span style="color:red">'
+              +result.trueAnswer+'</span>',
+            message: '<canvas id="mc-voting-chart"></canvas>',
+            onShow: function(){
+              var ctx = document.getElementById('mc-voting-chart');
+              var myChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                      labels: ['A', 'B', 'C', 'D'],
+                      datasets: [{
+                          data: [
+                            result.voteA,
+                            result.voteB,
+                            result.voteC,
+                            result.voteD
+                          ],
+                          backgroundColor: [
+                              'rgba(255, 99, 132, 0.2)',
+                              'rgba(54, 162, 235, 0.2)',
+                              'rgba(255, 206, 86, 0.2)',
+                              'rgba(75, 192, 192, 0.2)',
+                              'rgba(153, 102, 255, 0.2)',
+                              'rgba(255, 159, 64, 0.2)'
+                          ],
+                          borderColor: [
+                              'rgba(255, 99, 132, 1)',
+                              'rgba(54, 162, 235, 1)',
+                              'rgba(255, 206, 86, 1)',
+                              'rgba(75, 192, 192, 1)',
+                              'rgba(153, 102, 255, 1)',
+                              'rgba(255, 159, 64, 1)'
+                          ],
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                      legend: {
+                        display: false
+                      },
+                      scales: {
+                          yAxes: [{
+                              ticks: {
+                                  beginAtZero: true
+                              }
+                          }]
+                      }
+                  }
+              });
+              myChart.canvas.parentNode.style.height = '400px';
+              myChart.canvas.parentNode.style.width = '500px';
+            }
+          });
+
+          
           
         } else if (response.status == 401) {
           var data = await response.text(); // for res.send()
@@ -258,16 +348,58 @@
         if (response.ok) {
           var data = await response.json(); // for res.ok() or res.json()
           var result=data.result;
-        //   alert(JSON.stringify(result));
-        //   console.log(result);
+  
           bootbox.alert({
             size: "large",
-            title: result.question,
-            message:
-                    "<div class='result'><div>True: " +result.voteTrue+ "</div>"+
-                    "<div>False: " +result.voteFalse+"</div><br>"+
-                    "<div>Correct answer: "+result.trueAnswer+"<div></div>",
-            callback: function(){ /* your callback code */ }
+            title: result.question+'<br>'+'Answer: '+'<span style="color:red">'
+              +result.trueAnswer+'</span>',
+            message: '<canvas id="tf-voting-chart"></canvas>',  
+            onShow: function(){
+            var ctx2 = document.getElementById('tf-voting-chart');
+            var myChart2 = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['True','False'],
+                    datasets: [{
+                        data: [
+                          result.voteTrue,
+                          result.voteFalse,
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                      display: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+              });
+            myChart2.canvas.parentNode.style.height = '400px';
+            myChart2.canvas.parentNode.style.width = '500px';
+            }
           })
           
         } else if (response.status == 401) {
@@ -321,19 +453,132 @@
         if (response.ok) {
           var data = await response.json(); // for res.ok() or res.json()
           var result=data.result;
-        //   alert(JSON.stringify(result));
-        //   console.log(result);
 
-          var template="<div class='result'>";
-          for(var len=0;len<result.arrayopt.length;len++){
-            template+="<div>"+ result.arrayopt[len]+": " +result.arrayvotes[len]+ "</div>";
-          }
-          template+="</div>"
+          // var template="<div class='result'>";
+          // for(var len=0;len<result.arrayopt.length;len++){
+          //   template+="<div>"+ result.arrayopt[len]+": " +result.arrayvotes[len]+ "</div>";
+          // }
+          // template+="</div>"
           bootbox.alert({
             size: "large",
             title: result.title,
-            message: template,
-            callback: function(){ /* your callback code */ }
+            message: '<canvas id="voting-chart"></canvas>',  
+            onShow: function(){
+            var ctx3 = document.getElementById('voting-chart');
+            var myChart3 = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: result.arrayopt,
+                    datasets: [{
+                        data: result.arrayvotes,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                      display: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+              });
+            myChart3.canvas.parentNode.style.height = '400px';
+            myChart3.canvas.parentNode.style.width = '500px';
+            }
+          })
+
+          
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);
+        }  
+    };
+    
+    async function Tagcloud(qid,folder,formid){
+        // alert("formid:"+formid);
+        const form = document.getElementById(formid);
+        const formData = new FormData(form);
+
+        // alert(qid+" ,"+folder);
+        formData.append('qid', qid);
+        formData.append('folder', folder);
+        formData.append('viewer', '');
+     
+        var response = await fetch('/'+folder+'/Tagcloud/'+qid, {
+          method: 'POST',
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+        //   alert(data.message);
+          var response = await fetch('/present/hostforward', {
+                method: 'POST',
+                credentials: "same-origin",
+          });
+          slide.goNext();
+        } else if (response.status == 401) {
+          var data = await response.text(); // for res.send()
+          alert(data.message);
+        } else {
+          alert(response.statusText);      
+        }  
+    };
+    async function Tagcloudresult(qid){
+        // console.log(qid);
+        var response = await fetch('/Tagcloud/'+qid+'/getTagcloudresult', {
+          method: 'GET',
+          credentials: "same-origin",
+        
+        });
+
+        if (response.ok) {
+          var data = await response.json(); // for res.ok() or res.json()
+          
+          var result=data.result;
+          console.log("res:"+result.ary);
+          // var template=""
+          // for(var f=0;f<result.ary.length;f++){
+          //   template+="<div>"+result.ary[f]+"</div>"
+          // }  
+          bootbox.alert({
+            size: "large",
+            title: result.title,
+            message:"<div class='tagcloud'></div>",
+            onShow: function(){
+              const container = '.tagcloud';
+              const texts = result.ary;
+              const options = {
+                containerClass: 'm-auto',
+                itemClass: 'text-danger'
+              };
+
+              TagCloud(container, texts, options);
+             }
           })
           
         } else if (response.status == 401) {
@@ -344,7 +589,6 @@
         }  
     };
     
-   
 </script>
 
 <style>
@@ -354,7 +598,7 @@
         position: fixed;
         bottom: 0;
         left: 0;
-        opacity: 1;
+        opacity: 0;
         background-color: rgb(243, 243, 243);
     
     }
@@ -391,4 +635,8 @@
     .form-check >label{
       margin-left: 10px;
     }
+    #mc-voting-chart,#tf-voting-chart,#voting-chart {
+      height:400px !important;
+    }
+  
 </style>

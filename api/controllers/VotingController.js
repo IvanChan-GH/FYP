@@ -193,6 +193,9 @@ module.exports = {
 
     if(req.body.viewer!=""){
       var min=new Date().getMinutes();
+      if(min<10){
+        min= "0"+min
+      }
       var hour=new Date().getHours();
       var day=new Date().getDate();
       var month= new Date().getMonth()+1;
@@ -240,4 +243,30 @@ module.exports = {
     });
   },
 
+  getLogInfo: async function (req,res){
+    var allvotes= await Votinglog.find({
+      folder:req.params.folder
+    }).sort([
+        {createdAt:'DESC'},
+        {viewerName: 'ASC'},
+    ])
+    var totalpage= Math.ceil(allvotes.length/10);
+    var current= parseInt(req.params.pagenum);
+
+    var start= parseInt(req.params.pagenum)-1+ (parseInt(req.params.pagenum)-1)*9;
+    // console.log('start:'+start);
+    var v=[];
+    for(var i=start; i<start+10; i++){
+      if(allvotes[i]){
+        v[i]=allvotes[i];
+      }
+    }
+
+    return res.view("pages/event/Votinglog", {
+      Voting: v,
+      totalpage:totalpage,
+      current:current,
+      folder:req.params.folder
+    });
+  }
 };

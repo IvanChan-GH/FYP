@@ -105,22 +105,27 @@ async function join(){
             bootbox.prompt({ 
                 size: "small",
                 title: "Please input your name (required)",
-                callback: async function(result){ 
-                    if(result!=""){
-                        console.log(result)
-                        var response= await fetch('/createsession/'+result,{
-                          method:"POST",
-                          credentials: "same-origin",
-                        });
-                        window.location.href = '/room/'+roomid; 
-                    }     
+                callback: async function(result){   
+                   console.log(result)
+                   if(result==""){
+                     bootbox.alert("Missing value.")
+                     return
+                   }
+                  if(result!=null){
+                      console.log(result)
+                      var response= await fetch('/createsession/'+result,{
+                        method:"POST",
+                        credentials: "same-origin",
+                      });
+                      window.location.href = '/room/'+roomid; 
+                  }     
                 }
             });  
           }else{
             window.location.href = '/room/'+roomid; 
           }
         } else {
-          alert(response.statusText);
+          bootbox.alert("Room not found.")
         }  
       
   };

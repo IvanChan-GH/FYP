@@ -42,7 +42,14 @@ module.exports = {
     },
     makerecords:{
       type: 'boolean',
+      defaultsTo: true
+    },
+    allowAccess:{
+      type: 'boolean',
       defaultsTo: false
+    },
+    accesscode:{
+      type: 'string',
     },
 
 

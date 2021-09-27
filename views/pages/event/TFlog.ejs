@@ -10,6 +10,8 @@
 <select style="float: right;margin-bottom: 10px;"class="form-select  form-select-lg" onchange="location = this.value;" aria-label="Default select example">
   <option selected>True/False</option>
   <option value="/<%=folder%>/getlog/MC/page1">Multiple Choice</option>
+  <option value="/<%=folder%>/getlog/Voting/page1">Voting</option>
+  <option value="/<%=folder%>/getlog/Tagcloud/page1">Tag Cloud</option>
 </select>
 
 <table class="table table-hover table-bordered">
@@ -17,9 +19,9 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
+        <th scope="col">Question</th>
         <th scope="col">Submission</th>
         <th scope="col">Correct Answer</th>
-        <th scope="col">Question</th>
         <th scope="col">Time</th>
       </tr>
     </thead>
@@ -28,9 +30,9 @@
             <tr>
                 <th scope="row"><%=index+1%></th>
                 <td><%=tf.viewerName%></td>
+                <td><%=tf.question%></td>
                 <td><%=tf.yourAnswer%></td>
                 <td><%=tf.trueAnswer%></td>
-                <td><%=tf.question%></td>
                 <td><%=tf.time%></td>
               </tr>
         <% }) %>

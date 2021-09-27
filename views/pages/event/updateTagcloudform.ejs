@@ -1,0 +1,113 @@
+<form method="post" style="float: left; text-align: left" class="col-12"
+  onsubmit="submitForm(this,'<%= user[0].folder%>','<%= user[0].slideNum%>');return false">
+  <div id="TC-container">
+    <% var index=1%>
+      
+    <% TC.forEach(function(m){ %>
+      <div id="<%=index%>">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque('<%= index%>')">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> Title :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="title" 
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required><%=m.title %></textarea>
+          </div>
+        </div>
+
+      </div>
+      <% }); %>
+      <% index++%>
+  </div>
+
+  
+    <div>
+      <a class="btn btn-primary" href="javascript:;" id="add-new-question">+ Add new question</a>
+    </div>
+    <br><br>
+
+    <row style="float: right;">
+      <input class="btn btn-info" type="submit" />
+    </row>
+</form>
+
+<script>
+
+  let numOfque = parseInt("<%= TC.length%>");
+  //alert(typeof(numOfque));
+  let qindex=numOfque+1;
+  document.getElementById("add-new-question").onclick = function () {
+    let template = `
+    <div id="${qindex}">
+        <div class=" form-group row">
+          <span class="col-sm-3 col-form-label">
+            <button type="button" class="close" style="width: 30px;height: 40;float: left;background-color: thistle;color:red; border-color:transparent;"
+              id="" onclick="delque(${qindex})">
+              <span>&times;</spa>
+            </button>
+            <label style="font-weight: bold; font-size: 20px;"> title :</label>
+          </span>
+          <div class="col-sm-9">
+            <textarea class="form-control-plaintext" name="title" placeholder="Enter the question here..."
+              style="background-color: whitesmoke; border: 1px solid cornflowerblue" required></textarea>
+          </div>
+        </div>
+         
+      </div>
+    `;
+    qindex++;
+    let container = document.getElementById("TC-container");
+    let div = document.createElement("div");
+    div.innerHTML = template;
+    container.appendChild(div);
+    numOfque++;
+  
+  };
+
+  async function submitForm(oFormElement, folder, slideNum) {
+    var formData = new FormData(oFormElement);
+    formData.append('numOfque', numOfque);
+    formData.append('folder', folder);
+    formData.append('slideNum', slideNum);
+    formData.append('insertBefore', '<%=TC[0].insertBefore%>');
+
+  
+    var response = await fetch('/<%=user[0].folder%>/updateTagcloudform/<%=TC[0].insertBefore%>', {
+      method: oFormElement.method,
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    if (response.ok) {
+      var data = await response.json(); // for res.ok() or res.json()
+      if(data.message=="invalid update!!"){
+        bootbox.alert(data.message);
+      }else{
+          bootbox.alert({
+            message: data.message,
+            callback: function () {
+              window.close();  
+            }
+          })
+      }
+    
+     
+    } else if (response.status == 401) {
+      var data = await response.text(); // for res.send()
+      alert(data.message);
+    } else {
+      alert(response.statusText);
+    }
+  };
+
+  async function delque(id) {
+    // alert(id)
+    var element = document.getElementById(id);
+    element.parentNode.removeChild(element);
+    numOfque--;
+  }
+</script>

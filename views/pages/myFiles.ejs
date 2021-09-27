@@ -60,13 +60,21 @@
     height="200px"
   />
 </div>
-<br>
+<br />
 <div style="font-size: 24px; text-align: left !important">
   <label><u>My file list</u></label>
+  <button
+    type="button"
+    style="background-color: yellow; float: right"
+    class="btn"
+    onclick="importbtn()"
+  >
+    Import
+  </button>
 </div>
 
-<div  style="min-height: 180px;">
-  <ul class="list-group" style="text-align:start;">
+<div style="min-height: 180px">
+  <ul class="list-group" style="text-align: start">
     <% var index=1; %> <% users.forEach( function(user) { %>
     <li
       class="list-group-item list-group-item-success d-flex justify-content-between align-items-start"
@@ -75,12 +83,32 @@
         <%= index %>. <%= user.fileName %>
       </a>
       <div class="col-7 col-lg-4">
-      <button type="button" class="btn btn-success"  onclick="startbtn('<%=user.folder %>')">Start</button>
-      <a href="<%=user.folder%>/getlog/TF/page1"><button type="button" class="btn btn-secondary" >Log</button></a>
-      <button type="button" class="btn btn-secondary"  onclick="settingbtn('<%=user.folder %>')">Setting</button>
-      <button type="button" class="btn btn-danger" id="deletebtn" onclick="deleteppt('<%=user.folder %>')">Delete</button>
+        <button
+          type="button"
+          class="btn btn-success"
+          onclick="startbtn('<%=user.folder %>')"
+        >
+          Start
+        </button>
+        <a href="<%=user.folder%>/getlog/TF/page1"
+          ><button type="button" class="btn btn-secondary">Log</button></a
+        >
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="settingbtn('<%=user.folder %>')"
+        >
+          Setting
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          id="deletebtn"
+          onclick="deleteppt('<%=user.folder %>')"
+        >
+          Delete
+        </button>
       </div>
-
     </li>
     <% index++}); %>
   </ul>
@@ -98,16 +126,16 @@
 
     if (response.ok) {
       var data = await response.json(); // for res.ok() or res.json()
-      document.getElementById("overlay").style.display = "none";;
+      document.getElementById("overlay").style.display = "none";
       // alert(data.message);
       console.log(data.message);
-      var msg=data.message
+      var msg = data.message;
       bootbox.alert({
-          message: data.message,
-          callback: function () {
-            location.reload(true);   
-          }
-      })
+        message: data.message,
+        callback: function () {
+          location.reload(true);
+        },
+      });
       // location.reload(true);
     } else if (response.status == 401) {
       var data = await response.text(); // for res.send()
@@ -118,10 +146,10 @@
   }
   //delete ppt
   async function deleteppt(foldername) {
-    bootbox.confirm('Are you sure to delete?', async function (result) {
+    bootbox.confirm("Are you sure to delete?", async function (result) {
       if (result) {
-        var response = await fetch('/deletefolder/'+foldername, {
-          method: 'POST',
+        var response = await fetch("/deletefolder/" + foldername, {
+          method: "POST",
           credentials: "same-origin",
         });
 
@@ -141,10 +169,42 @@
 
   //redirect to setting page
   async function settingbtn(foldername) {
-    window.location.replace("/"+foldername+"/setting");
+    window.location.replace("/" + foldername + "/setting");
   }
   // start presentation
-  async function startbtn(foldername){
-    window.location.replace("/"+foldername+"/presenting");
+  async function startbtn(foldername) {
+    window.location.replace("/" + foldername + "/presenting");
+  }
+
+  function importbtn() {
+    bootbox.prompt({
+      size: "middle",
+      title: "Input the access code to import file",
+      callback: async function (result) {
+        console.log(result);
+        if (result == "") {
+          bootbox.alert("Missing value.");
+          return;
+        }
+        if (result != null) {
+          console.log(result);
+          var response = await fetch("/importfolder/" + result, {
+            method: "POST",
+            credentials: "same-origin",
+          });
+          if (response.ok) {
+            var data = await response.json();
+            console.log(data)
+            bootbox.alert({
+            message: data.message,
+            callback: function () {
+              location.reload(true);
+            },
+      });
+
+          }
+        }
+      },
+    });
   }
 </script>

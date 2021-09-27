@@ -28,7 +28,8 @@ module.exports = {
   
   logout: async function(req, res) {
     console.log("logout");
-    req.session.name = "";
+    
+    req.session.name = null;
     req.session.email = "";
     req.logout();
     res.redirect('/');

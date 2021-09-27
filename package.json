@@ -8,6 +8,8 @@
     "@sailshq/connect-redis": "^3.2.1",
     "@sailshq/lodash": "^3.10.3",
     "@sailshq/socket.io-redis": "^5.2.0",
+    "TagCloud": "^2.2.0",
+    "fs-extra": "^9.1.0",
     "grunt": "1.0.4",
     "passport": "^0.4.1",
     "passport-google-oauth2": "^0.2.0",

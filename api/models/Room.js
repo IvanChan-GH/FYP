@@ -22,6 +22,9 @@ module.exports = {
     currentPage: {
       type: 'number',
       defaultsTo: 1
+    },
+    totalPage: {
+      type: 'number',
     }
   },
 

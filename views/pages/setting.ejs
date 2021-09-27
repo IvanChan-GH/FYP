@@ -16,7 +16,7 @@
         <% } else{ %>
             <input type="checkbox" name="allowScroll" value=true class="custom-control-input" id="customSwitch1" >
         <% } %>
-            <label class="custom-control-label" for="customSwitch1">Allow viewer changing page on scroll</label>
+            <label class="custom-control-label" for="customSwitch1">Allow changing page on scroll</label>
     </div>
  
     <div class="custom-control custom-switch">
@@ -25,7 +25,23 @@
         <% } else { %>
             <input type="checkbox"  name="makerecord" value=true class="custom-control-input" id="customSwitch2">
         <% } %>
-            <label class="custom-control-label" for="customSwitch2">Save participants' name and their submission</label>
+            <label class="custom-control-label" for="customSwitch2">Require viewer's name and take logs on their submission </label>
+    </div>
+
+    <div class="custom-control custom-switch">
+        <% if(user.allowAccess==true) { %>
+            <input type="checkbox" onclick="showcode()" name="allowAccess" value=true class="custom-control-input" id="customSwitch3" checked >
+        <% } else { %>
+            <input type="checkbox" onclick="showcode()" name="allowAccess" value=true class="custom-control-input" id="customSwitch3">
+        <% } %>
+            <label class="custom-control-label" for="customSwitch3">Allow others to access this file </label>
+    </div>
+    <div class="custom-control custom-switch">
+        <% if(user.allowAccess==true) { %>
+            <label id="text" style="color:blue;">Access code: <b><%=user.accesscode%></b></label>
+        <% } else { %> 
+            <label id="text" style="display: none;color:blue;">Access code: <b><%=user.accesscode%></b></label>
+        <% } %>      
     </div>
     <br>
     <row>
@@ -57,4 +73,18 @@
             })
         } 
     }
+    
+    function showcode() {
+    // Get the checkbox
+    var checkBox = document.getElementById("customSwitch3");
+    // Get the output text
+    var text = document.getElementById("text");
+
+    // If the checkbox is checked, display the output text
+    if (checkBox.checked == true){
+        text.style.display = "block";
+    } else {
+        text.style.display = "none";
+    }
+}
 </script>
